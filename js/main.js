@@ -14,7 +14,7 @@ function onLoad() {
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(width, height);
-    renderer.setClearColor(0x00dddd); // background colour
+    renderer.setClearColor(0x35bbff); // background colour
 
     canvasContainer.appendChild(renderer.domElement);
 
@@ -22,14 +22,14 @@ function onLoad() {
 
     camera = new THREE.PerspectiveCamera(80, width / height, 1, 1000);
     camera.up = new THREE.Vector3(0, 1, 0);
-    scene.add(camera);
+    // scene.add(camera);
 
     // environment.js
     environment = drawEnvironment();
     scene.add(environment);
 
     // plane.js
-    plane = drawPlane();
+    plane = addPlane(camera);
     scene.add(plane);
     plane.position.set(0, 20, 150);
 
@@ -37,11 +37,11 @@ function onLoad() {
 }
 
 function draw() {
-    var dt = clock.getDelta();
-    var time = clock.getElapsedTime();
+    let dt = clock.getDelta();
+    let time = clock.getElapsedTime();
 
     // controls.js
-    parseControls(dt);
+    parseControls(dt, camera);
 
     // Move the camera behind the plane and look at the plane
     // TODO: roll camera based on plane roll
@@ -49,13 +49,11 @@ function draw() {
     var behind = new THREE.Vector3(0, 5, 16);
     var axis = new THREE.Vector3(1, 0, 0);
     behind.applyAxisAngle(axis, plane.rotation.x);
-    camera.position.copy(plane.position);
-    camera.position.addVectors(camera.position, behind);
-    camera.lookAt(plane.position);
+    // camera.position.copy(plane.position);
+    // camera.position.addVectors(camera.position, behind);
+    // camera.lookAt(plane.position);
 
-    // Move the plane a little along the Z-axis
-    // TODO: move it along the vector it's pointing to
-    plane.position.z = plane.position.z - dt * 10;
+    drawPlane();
 
     requestAnimationFrame(draw);
     renderer.render(scene, camera);
