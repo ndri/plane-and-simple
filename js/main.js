@@ -7,6 +7,16 @@ var keyboard = new THREEx.KeyboardState();
 
 var plane, environment;
 
+var speed = 0;
+var fallSpeed = 0;
+
+const gravity = 5;
+const minSpeed = -10.0; // TODO: reversing (have to change physics)
+const maxSpeed = 150.0;
+const liftSpeed = 30.0;
+const acceleration = 0.3;
+const drag = 0.1;
+
 function onLoad() {
     var canvasContainer = document.getElementById("myCanvasContainer");
     var width = 800;
@@ -22,7 +32,6 @@ function onLoad() {
 
     camera = new THREE.PerspectiveCamera(80, width / height, 1, 1000);
     camera.up = new THREE.Vector3(0, 1, 0);
-    // scene.add(camera);
 
     // environment.js
     environment = drawEnvironment();
@@ -31,29 +40,25 @@ function onLoad() {
     // plane.js
     plane = addPlane(camera);
     scene.add(plane);
-    plane.position.set(0, 20, 150);
+    plane.position.set(30, 1, 350);
 
     draw();
 }
 
 function draw() {
     let dt = clock.getDelta();
-    let time = clock.getElapsedTime();
+    //let time = clock.getElapsedTime();
 
     // controls.js
     parseControls(dt, camera);
 
-    // Move the camera behind the plane and look at the plane
-    // TODO: roll camera based on plane roll
-    // TODO: figure out why the plane is flipped halfway through a loop de loop
-    var behind = new THREE.Vector3(0, 5, 16);
-    var axis = new THREE.Vector3(1, 0, 0);
-    behind.applyAxisAngle(axis, plane.rotation.x);
-    // camera.position.copy(plane.position);
-    // camera.position.addVectors(camera.position, behind);
-    // camera.lookAt(plane.position);
+    // plane.js
+    movePlane(dt, speed);
 
-    drawPlane();
+    // change the DOM elements
+    document.getElementById("fps").innerHTML = Math.round(1 / dt * 100) / 100 ;
+    document.getElementById("speed").innerHTML = Math.round(speed * 100) / 100;
+    document.getElementById("fallSpeed").innerHTML = Math.round(fallSpeed * 100) / 100;
 
     requestAnimationFrame(draw);
     renderer.render(scene, camera);

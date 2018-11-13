@@ -1,10 +1,9 @@
 function drawEnvironment() {
     let environment = new THREE.Object3D();
 
-    var geometry = new THREE.PlaneGeometry(50, 50, 1);
+    var geometry = new THREE.PlaneGeometry(750, 750, 1);
     var material = new THREE.MeshBasicMaterial({color: 0x336633});
     var floor = new THREE.Mesh(geometry, material);
-    floor.scale.set(15, 15, 15);
     floor.rotation.set(-toRad(90), 0, 0);
     environment.add(floor);
 
