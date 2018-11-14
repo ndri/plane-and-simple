@@ -5,6 +5,8 @@ Projects page: https://courses.cs.ut.ee/2018/cg/fall/Main/Projects
 
 Wiki page: https://courses.cs.ut.ee/2018/cg/fall/Main/Project-PlaneGame
 
+Latest version: https://andri.io/plane-and-simple
+
 Team members:
 
 * Andri Soone [@ndri](https://github.com/ndri)
