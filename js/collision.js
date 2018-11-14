@@ -1,13 +1,11 @@
-// detects collision between the plane and meshes in collidableMeshList
+// detects collision between the given object and meshes 
 // source: https://github.com/stemkoski/stemkoski.github.com/blob/master/Three.js/Collision-Detection.html
-function detectCollisions() { // TODO: fix bug - two false-positive collisions at the start of game
-    // collects all the vertices of body and children of the plane
-    var bodyVertices = plane.geometry.vertices;
-    var wingsVertices = plane.children[0].geometry.vertices;
-    var tailVertices = plane.children[1].geometry.vertices;
-    var vertices = bodyVertices.concat(wingsVertices, tailVertices);
+function detectCollisions(object, collidableMeshList) { // TODO: fix bug - two false-positive collisions at the start of game
+    // let's get all all the vertices of the object's meshes
+    // (since we want all parts of the object to be collidable with the collidableMeshList meshes)
+    var vertices = getAllVertices(object);
 
-    // sets a ray between the origin of the plane and each of the vertices
+    // sets a ray between the origin of the object and each of the vertices
     for (let i = 0; i < vertices.length; i++) {
         var origin = plane.position.clone();
         var localVertex = vertices[i].clone();
@@ -16,7 +14,6 @@ function detectCollisions() { // TODO: fix bug - two false-positive collisions a
 
         var ray = new THREE.Raycaster(origin, direction.clone().normalize());
         
-        // collidableMeshList is a global varible
         var collisions = ray.intersectObjects(collidableMeshList);
         
         // if a collidable mesh intersects with the ray then the collision will be detected
@@ -24,5 +21,19 @@ function detectCollisions() { // TODO: fix bug - two false-positive collisions a
             console.log("collision detected!");
         }
     }
+}
 
+// returns a list of all the vertices of all the meshes in the object
+function getAllVertices(object) {
+    vertices = [];
+    if (object === undefined) {
+        return vertices;
+    }
+    if (object.type === ("Mesh")) {
+        vertices = vertices.concat(object.geometry.vertices);
+    }
+    for (let i = 0; i < object.children.length; i++) {
+        vertices = vertices.concat(getAllVertices(object.children[i]));
+    }
+    return vertices;
 }

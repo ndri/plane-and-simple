@@ -44,7 +44,7 @@ function onLoad() {
     plane.position.set(30, 1, 350);
 
     // loop.js - this is for testing; can be removed if necessary
-    var loop = drawLoop();
+    var loop = drawLoop(false);
     scene.add(loop);
     loop.position.set(30, 30, 290);
 
@@ -61,8 +61,8 @@ function draw() {
     // plane.js
     movePlane(dt, speed);
 
-    //collision.js
-    detectCollisions();
+    // collision.js
+    detectCollisions(plane, collidableMeshList);
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = Math.round(1 / dt * 100) / 100 ;
