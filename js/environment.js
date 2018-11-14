@@ -14,12 +14,14 @@ function drawEnvironment() {
             var geometry = new THREE.BoxGeometry( 1, 2, 1 );
             var material = new THREE.MeshBasicMaterial( {color: 0x553311} );
             var trunk = new THREE.Mesh( geometry, material );
+            collidableMeshList.push(trunk);
             trunk.position.set(0, 1, 0);
             tree.add(trunk);
 
             var geometry = new THREE.BoxGeometry( 2.6, 2.6, 2.6 );
             var material = new THREE.MeshBasicMaterial( {color: 0x227722} );
             var branches = new THREE.Mesh( geometry, material );
+            collidableMeshList.push(branches);
             branches.position.set(0, 3.3, 0);
             tree.add(branches);
 

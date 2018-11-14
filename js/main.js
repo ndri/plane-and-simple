@@ -6,6 +6,7 @@ var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
 
 var plane, environment;
+var collidableMeshList = []; // all meshes that should be collidable
 
 var speed = 0;
 var fallSpeed = 0;
@@ -42,6 +43,11 @@ function onLoad() {
     scene.add(plane);
     plane.position.set(30, 1, 350);
 
+    // loop.js - this is for testing; can be removed if necessary
+    var loop = drawLoop();
+    scene.add(loop);
+    loop.position.set(30, 30, 290);
+
     draw();
 }
 
@@ -54,6 +60,9 @@ function draw() {
 
     // plane.js
     movePlane(dt, speed);
+
+    //collision.js
+    detectCollisions();
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = Math.round(1 / dt * 100) / 100 ;
