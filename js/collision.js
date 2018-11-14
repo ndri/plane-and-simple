@@ -1,6 +1,10 @@
-// detects collision between the given object and meshes 
-// source: https://github.com/stemkoski/stemkoski.github.com/blob/master/Three.js/Collision-Detection.html
-function detectCollisions(object, collidableMeshList) { // TODO: fix bug - two false-positive collisions at the start of game
+/**
+ * detects collisions between the given object and meshes
+ * on detection, the onCollision function is called
+ * source: https://github.com/stemkoski/stemkoski.github.com/blob/master/Three.js/Collision-Detection.html
+ * TODO: fix bug - false-positive collisions detected at the start of game
+ */
+function detectCollisions(object, collidableMeshList, onCollision) {
     // let's get all all the vertices of the object's meshes
     // (since we want all parts of the object to be collidable with the collidableMeshList meshes)
     var vertices = getAllVertices(object);
@@ -18,12 +22,14 @@ function detectCollisions(object, collidableMeshList) { // TODO: fix bug - two f
         
         // if a collidable mesh intersects with the ray then the collision will be detected
         if (collisions.length > 0 && collisions[0].distance < direction.length()) {
-            console.log("collision detected!");
+            onCollision();
         }
     }
 }
 
-// returns a list of all the vertices of all the meshes in the object
+/**
+ * returns a list of all the vertices of all the meshes in the given object
+ */
 function getAllVertices(object) {
     vertices = [];
     if (object === undefined) {
