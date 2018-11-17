@@ -46,8 +46,8 @@ function onLoad() {
     // loop.js
     loop = getLoop(true);
     scene.add(loop);
-    // nextLoop = getLoop(false);
-    // scene.add(nextLoop);
+    nextLoop = getLoop(false);
+    scene.add(nextLoop);
 
     draw();
 }
@@ -65,7 +65,7 @@ function draw() {
     // collision.js
     detectCollisions(plane, collidableMeshList, handleCollision);
     // detecting when plane flies through loop
-    detectCollisions(plane, [loop.children[0]], handlePlaneThroughLoop); 
+    detectCollisions(plane.children[0], [loop.children[0]], handlePlaneThroughLoop); 
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = Math.round(1 / dt * 100) / 100 ;

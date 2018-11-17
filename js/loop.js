@@ -25,9 +25,13 @@ function getLoop(isActive) {
  * TODO: create point counter and increment when this is called
  */
 function handlePlaneThroughLoop() {
+    console.log("hit")
     x = Math.random() * 300;
     y = Math.random() * 60 + 40;
     z = Math.random() * 300;
-    loop.position.set(x, y, z);
-    // nextLoop.position.set(x, y, z);
+    r = Math.random() * 9 + 1
+    loop.position.copy(nextLoop.position);
+    loop.rotation.y = nextLoop.rotation.y
+    nextLoop.position.set(x, y, z);
+    nextLoop.rotation.y = Math.PI / r;
 }
