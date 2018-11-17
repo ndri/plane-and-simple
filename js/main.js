@@ -34,7 +34,7 @@ function onLoad() {
     // plane.js
     plane = addPlane(camera);
     scene.add(plane);
-    plane.position.set(30, 1, 350);
+    plane.position.set(startX, startY, startZ);
 
     // loop.js
     loop = getLoop(true);
