@@ -45,8 +45,8 @@ function getAllVertices(object) {
 }
 
 /**
- * called on collision
+ * called on collision.
  */
 function handleCollision() {
-    speed = 0
+    speed = 0;
 }

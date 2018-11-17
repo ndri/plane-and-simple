@@ -41,6 +41,7 @@ function onLoad() {
     scene.add(loop);
     nextLoop = getLoop(false);
     scene.add(nextLoop);
+    console.log(plane)
 
     draw();
 }
