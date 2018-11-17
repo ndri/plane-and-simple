@@ -1,6 +1,6 @@
 function addPlane(camera) {
     var geometry = new THREE.BoxGeometry(2, 2, 10);
-    var material = new THREE.MeshBasicMaterial({color: 0xffffff});
+    var material = new THREE.MeshBasicMaterial({color: 0xccdddd});
     var body = new THREE.Mesh(geometry, material);
 
     var geometry = new THREE.BoxGeometry(20, 0.5, 3);
