@@ -25,13 +25,14 @@ function getRing(isActive) {
  * TODO: create point counter and increment when this is called
  */
 function handlePlaneThroughRing() {
-    console.log("hit")
     x = Math.random() * 300;
     y = Math.random() * 60 + 40;
     z = Math.random() * 300;
-    r = Math.random() * 9 + 1
-    ring.position.copy(nextRing.position);
+    // r = Math.random() * 9 + 1
+    ring.position.set(x, y, z);
+    /*
     ring.rotation.y = nextRing.rotation.y
     nextRing.position.set(x, y, z);
     nextRing.rotation.y = Math.PI / r;
+    */
 }

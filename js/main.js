@@ -40,8 +40,8 @@ function onLoad() {
     // ring.js
     ring = getRing(true);
     scene.add(ring);
-    nextRing = getRing(false);
-    scene.add(nextRing);
+    // nextRing = getRing(false);
+    // scene.add(nextRing);
 
     draw();
 }
