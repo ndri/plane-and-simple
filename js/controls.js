@@ -20,10 +20,10 @@ function parseControls(dt) {
 
     // Q and E should yaw the plane
     if (keyboard.pressed("q")) {
-        plane.rotateY(toRad(60 * dt));
+        plane.rotateY(toRad(speed * dt));
     }
     if (keyboard.pressed("e")) {
-        plane.rotateY(-toRad(60 * dt));
+        plane.rotateY(-toRad(speed * dt));
     }
 
     // W and S accelerate and decelerate
