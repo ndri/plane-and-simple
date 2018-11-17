@@ -5,7 +5,7 @@ var viewerPosition = new THREE.Vector3(0.0, 0.0, 30.0);
 var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
 
-var plane, environment, loop, nextLoop;
+var plane, environment, ring, nextRing;
 var collidableMeshList = []; // all meshes that should be collidable
 
 var speed = 0;
@@ -36,12 +36,11 @@ function onLoad() {
     scene.add(plane);
     plane.position.set(startX, startY, startZ);
 
-    // loop.js
-    loop = getLoop(true);
-    scene.add(loop);
-    nextLoop = getLoop(false);
-    scene.add(nextLoop);
-    console.log(plane)
+    // ring.js
+    ring = getRing(true);
+    scene.add(ring);
+    nextRing = getRing(false);
+    scene.add(nextRing);
 
     draw();
 }
@@ -58,8 +57,8 @@ function draw() {
 
     // collision.js
     detectCollisions(plane, collidableMeshList, handleCollision);
-    // detecting when plane flies through loop
-    detectCollisions(plane.children[0], [loop.children[0]], handlePlaneThroughLoop); 
+    // detecting when plane flies through ring
+    detectCollisions(plane.children[0], [ring.children[0]], handlePlaneThroughRing); 
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = Math.round(1 / dt * 100) / 100 ;
