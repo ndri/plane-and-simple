@@ -9,8 +9,8 @@ function drawEnvironment() {
     environment.add(floor);
 
     // trees
-    for (let i=-15; i<15; i++) {
-        for (let j=-15; j<15; j++) {
+    for (let i=-treeAmount; i<treeAmount; i++) {
+        for (let j=-treeAmount; j<treeAmount; j++) {
             var tree = new THREE.Object3D();
 
             var geometry = new THREE.BoxGeometry( 1, 2, 1 );
@@ -34,8 +34,8 @@ function drawEnvironment() {
     }
 
     // clouds
-    for (let i=-8; i<8; i++) {
-        for (let j=-8; j<8; j++) {
+    for (let i=-cloudAmount; i<cloudAmount; i++) {
+        for (let j=-cloudAmount; j<cloudAmount; j++) {
             var cloud = new THREE.Object3D();
 
             var geometry = new THREE.BoxGeometry(2, 1, 1);
