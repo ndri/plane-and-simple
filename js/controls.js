@@ -34,4 +34,12 @@ function parseControls(dt) {
     } else {
         throttle = 0;
     }
+
+    // Space resets the plane to a random position
+    if (keyboard.pressed("space")) {
+        var newX = Math.random() * worldSize - worldSize / 2;
+        var newZ = Math.random() * worldSize - worldSize / 2;
+        plane.position.set(newX, 1, newZ);
+        plane.rotation.set(0, plane.rotation.y, 0);
+    }
 }

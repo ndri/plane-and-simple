@@ -32,7 +32,7 @@ function movePlane(dt) {
 
     // If speed isn't high enough, increase the speed that moves the plane down in the world space
     if (speed < liftSpeed) {
-        fallSpeed += 10 * gravity * (1 - speed / liftSpeed);
+        fallSpeed += 5 * gravity * (1 - speed / liftSpeed);
     } else {
         if (fallSpeed < 0) {
             fallSpeed = 0;

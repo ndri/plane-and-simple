@@ -1,3 +1,5 @@
+// TODO: Structure these (plane, world, other etc)
+
 const gravity = 0.5;
 const minSpeed = -10;
 const maxSpeed = 100;
@@ -12,8 +14,7 @@ const startX = 0;
 const startY = 1;
 const startZ = 0;
 
-// (2*treeAmount)^2 trees will be created
-const treeAmount = 10;
-// (2*cloudAmount)^2 clouds will be created
-const cloudAmount = 5;
+const worldSize = 1500; // Sidelength of the square world
+const treeAmount = 10; // (2*treeAmount)^2 trees will be created
+const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
 

@@ -2,7 +2,7 @@ function drawEnvironment() {
     let environment = new THREE.Object3D();
 
     // land
-    var geometry = new THREE.PlaneGeometry(2000, 2000, 1);
+    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 1);
     var material = new THREE.MeshBasicMaterial({color: 0x336633});
     var floor = new THREE.Mesh(geometry, material);
     floor.rotation.set(-toRad(90), 0, 0);
