@@ -24,14 +24,10 @@ function addPlane(camera) {
 
 function movePlane(dt) {
 
-    // Calculate the speed
     // Only apply throttle if in the allowed speed range
     if (speed < maxSpeed && speed > minSpeed) {
         speed += throttle;
     }
-    // Apply gravity based on how much the plane is facing up
-    var howMuchUp = plane.getWorldDirection(new THREE.Vector3(0, 1, 0)).y;
-    speed += gravity * howMuchUp;
 
 
     // If speed isn't high enough, increase the speed that moves the plane down in the world space
@@ -55,9 +51,14 @@ function movePlane(dt) {
     // Move the plane forward in the local space
     plane.translateZ(-speed * dt);
 
-    // If plane is above the ground, move the plane down in the world space based on fallSpeed
+    // Detect whether the plane is airborne
     if (plane.position.y > 1.0) {
+        // Move the plane down in the world space based on fallSpeed
         plane.position.y -= fallSpeed * dt;
+
+        // Apply gravity based on how much the plane is facing up
+        var howMuchUp = plane.getWorldDirection(new THREE.Vector3(0, 1, 0)).y;
+        speed += gravity * howMuchUp;
     } else {
         plane.position.y = 1.0;
         fallSpeed = 0;
