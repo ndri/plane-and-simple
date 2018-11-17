@@ -11,17 +11,10 @@ var collidableMeshList = []; // all meshes that should be collidable
 var speed = 0;
 var fallSpeed = 0;
 
-const gravity = 5;
-const minSpeed = -10.0; // TODO: reversing (have to change physics)
-const maxSpeed = 150.0;
-const liftSpeed = 30.0;
-const acceleration = 0.3;
-const drag = 0.1;
-
 function onLoad() {
     var canvasContainer = document.getElementById("myCanvasContainer");
-    var width = 800;
-    var height = 500;
+    var width = gameWidth;
+    var height = gameHeight;
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(width, height);
