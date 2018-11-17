@@ -64,11 +64,10 @@ function draw() {
     // change the DOM elements
     document.getElementById("fps").innerHTML = round(1 / dt);
     document.getElementById("speed").innerHTML = round(speed);
-    document.getElementById("fallSpeed").innerHTML = round(fallSpeed);
+    //document.getElementById("fallSpeed").innerHTML = round(fallSpeed);
     //var pdir = plane.getWorldDirection(new THREE.Vector3(0, 1, 0));
     //document.getElementById("planeDirection").innerHTML = round(pdir.x) + ", " + round(pdir.y) + ", " + round(pdir.z);
-    document.getElementById("planeRotation").innerHTML = round(plane.rotation.x) + ", " + round(plane.rotation.y) + ", " + round(plane.rotation.z);
-
+    //document.getElementById("planeRotation").innerHTML = round(plane.rotation.x) + ", " + round(plane.rotation.y) + ", " + round(plane.rotation.z);
 
 
     requestAnimationFrame(draw);
