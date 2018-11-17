@@ -10,6 +10,7 @@ var collidableMeshList = []; // all meshes that should be collidable
 
 var speed = 0;
 var fallSpeed = 0;
+var throttle = 0;
 
 function onLoad() {
     var canvasContainer = document.getElementById("myCanvasContainer");
@@ -61,17 +62,25 @@ function draw() {
     detectCollisions(plane.children[0], [ring.children[0]], handlePlaneThroughRing); 
 
     // change the DOM elements
-    document.getElementById("fps").innerHTML = Math.round(1 / dt * 100) / 100 ;
-    document.getElementById("speed").innerHTML = Math.round(speed * 100) / 100;
-    document.getElementById("fallSpeed").innerHTML = Math.round(fallSpeed * 100) / 100;
+    document.getElementById("fps").innerHTML = round(1 / dt);
+    document.getElementById("speed").innerHTML = round(speed);
+    document.getElementById("fallSpeed").innerHTML = round(fallSpeed);
+    //var pdir = plane.getWorldDirection(new THREE.Vector3(0, 1, 0));
+    //document.getElementById("planeDirection").innerHTML = round(pdir.x) + ", " + round(pdir.y) + ", " + round(pdir.z);
+    document.getElementById("planeRotation").innerHTML = round(plane.rotation.x) + ", " + round(plane.rotation.y) + ", " + round(plane.rotation.z);
+
+
 
     requestAnimationFrame(draw);
     renderer.render(scene, camera);
 }
 
-/**
- * Converts degrees to radians
- */
+// Converts degrees to radians
 function toRad(degree) {
     return Math.PI * 2 * degree / 360;
+}
+
+// Rounds float to 2 decimal places
+function round(n) {
+    return Math.round(n * 100) / 100;
 }

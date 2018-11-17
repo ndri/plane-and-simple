@@ -28,17 +28,10 @@ function parseControls(dt) {
 
     // W and S accelerate and decelerate
     if (keyboard.pressed("w")) {
-        if (speed < maxSpeed) {
-            speed += acceleration;
-        } else {
-            speed = maxSpeed;
-        }
-    }
-    if (keyboard.pressed("s")) {
-        if (speed > minSpeed) {
-            speed -= acceleration;
-        } else {
-            speed = minSpeed;
-        }
+        throttle = acceleration;
+    } else if (keyboard.pressed("s")) {
+        throttle = -acceleration;
+    } else {
+        throttle = 0;
     }
 }

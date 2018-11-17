@@ -52,7 +52,7 @@ function drawEnvironment() {
 
             cloud.rotation.y = Math.random() * 6.3;
             cloud.scale.set(Math.random() * 20 + 10, Math.random() * 10 + 10, Math.random() * 20 + 10);
-            cloud.position.set(i * 120, Math.random() * 100 + 100, j * 120);
+            cloud.position.set(i * 120, Math.random() * 100 + 150, j * 120);
             environment.add(cloud);
         }
     }
