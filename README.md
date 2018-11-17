@@ -31,5 +31,5 @@ Also, controls were added. For moving the plane. The arrow keys are assigned to 
 ## Physics
 For the first deadline simple but much needed physics were added to the game. Physics that alter the speed of the plane depending which direction it is flying make the flying more natural and give the plane some weight. Using the collision detection the plane can collide with different objects. However, a more complex collision detection method might have to be implemented in the future to fix some recurring errors with model clipping.
 
-## The Goal of the Game
+## Goal of the Game
 To make the game more challenging, rings were added. The rings can be flown through with the plane. In the future a score might be added.
