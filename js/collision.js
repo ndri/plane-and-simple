@@ -5,11 +5,11 @@
  * TODO: fix bug - false-positive collisions detected at the start of game
  */
 function detectCollisions(object, collidableMeshList, onCollision) {
-    // let's get all all the vertices of the object's meshes
+    // get all the vertices of the object's meshes
     // (since we want all parts of the object to be collidable with the collidableMeshList meshes)
     var vertices = getAllVertices(object);
 
-    // sets a ray between the origin of the object and each of the vertices
+    // set a ray between the origin of the object and each of the vertices
     for (let i = 0; i < vertices.length; i++) {
         var origin = plane.position.clone();
         var localVertex = vertices[i].clone();
@@ -42,4 +42,11 @@ function getAllVertices(object) {
         vertices = vertices.concat(getAllVertices(object.children[i]));
     }
     return vertices;
+}
+
+/**
+ * called on collision
+ */
+function handleCollision() {
+    speed = 0
 }

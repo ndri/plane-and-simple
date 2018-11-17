@@ -1,4 +1,4 @@
-function drawLoop(isActive) {
+function getLoop(isActive) {
     var geometry = new THREE.TorusGeometry(20, 3, 16, 100);
     var material = new THREE.MeshBasicMaterial({ color: 0xffdf00 });
     var loop = new THREE.Mesh(geometry, material);
@@ -23,8 +23,11 @@ function drawLoop(isActive) {
 /**
  * called when plane flies through loop
  * TODO: create point counter and increment when this is called
- * TODO: set loop to new random position
  */
 function handlePlaneThroughLoop() {
-    loop.position.set(30, 30, 100);
+    x = Math.random() * 300;
+    y = Math.random() * 60 + 40;
+    z = Math.random() * 300;
+    loop.position.set(x, y, z);
+    // nextLoop.position.set(x, y, z);
 }
