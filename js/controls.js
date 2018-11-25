@@ -35,11 +35,15 @@ function parseControls(dt) {
         throttle = 0;
     }
 
-    // Space resets the plane to a random position
+    // Space resets the plane to runway
     if (keyboard.pressed("space")) {
-        var newX = Math.random() * worldSize - worldSize / 2;
-        var newZ = Math.random() * worldSize - worldSize / 2;
-        plane.position.set(newX, 1, newZ);
-        plane.rotation.set(0, plane.rotation.y, 0);
+        // var newX = Math.random() * worldSize - worldSize / 2;
+        // var newZ = Math.random() * worldSize - worldSize / 2;
+        // plane.position.set(newX, 1, newZ);
+        // plane.rotation.set(0, plane.rotation.y, 1000);
+
+        plane.position.set(startX, startY, startZ);
+        speed = fallSpeed = throttle = 0;
+        plane.rotation.set(0, 0, 0);
     }
 }

@@ -6,12 +6,17 @@ var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
 
 var plane, environment, ring, nextRing;
+var noisefn = noise.simplex2;
 var collidableMeshList = []; // all meshes that should be collidable
 
 var speed = 0;
 var fallSpeed = 0;
 var throttle = 0;
 var score = 0;
+
+var stats = new Stats();
+stats.showPanel( 1 );
+document.body.appendChild( stats.dom );
 
 function onLoad() {
     var canvasContainer = document.getElementById("myCanvasContainer");
@@ -30,7 +35,7 @@ function onLoad() {
     camera.up = new THREE.Vector3(0, 1, 0);
 
     // environment.js
-    environment = drawEnvironment();
+    environment = addEnvironment(noisefn);
     scene.add(environment);
 
     // plane.js
@@ -48,6 +53,8 @@ function onLoad() {
 }
 
 function draw() {
+    stats.begin();
+
     let dt = clock.getDelta();
     //let time = clock.getElapsedTime();
 
@@ -74,6 +81,8 @@ function draw() {
 
     requestAnimationFrame(draw);
     renderer.render(scene, camera);
+
+    stats.end();
 }
 
 // Converts degrees to radians

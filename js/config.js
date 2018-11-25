@@ -11,10 +11,10 @@ const gameWidth = 800;
 const gameHeight = 500;
 
 const startX = 0;
-const startY = 1;
-const startZ = 0;
+const startY = 0;
+const startZ = 93;
 
-const worldSize = 1500; // Sidelength of the square world
+const worldSize = 1800; // Sidelength of the square world
 const treeAmount = 10; // (2*treeAmount)^2 trees will be created
 const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
 
