@@ -1,3 +1,12 @@
+var speed = 0;
+var fallSpeed = 0;
+var throttle = 0;
+var score = 0;
+
+var aileronPosition = 0;
+var elevatorPosition = 0;
+var rudderPosition = 0;
+
 function addPlane(camera) {
     var geometry = new THREE.BoxGeometry(2, 2, 10);
     var material = new THREE.MeshBasicMaterial({color: 0xccdddd});
@@ -25,10 +34,9 @@ function addPlane(camera) {
 function movePlane(dt) {
 
     // Only apply throttle if in the allowed speed range
-    if (speed < maxSpeed && speed > minSpeed) {
+    if (throttle > 0 && speed < maxSpeed || throttle < 0 && speed > minSpeed) {
         speed += throttle;
     }
-
 
     // If speed isn't high enough, increase the speed that moves the plane down in the world space
     if (speed < liftSpeed) {
@@ -48,6 +56,12 @@ function movePlane(dt) {
         speed += drag;
     }
 
+    // Rotate according to the ailerons, elevators and rudder
+    plane.rotateZ(toRad(aileronPosition * speed * dt));
+    plane.rotateX(toRad(elevatorPosition * speed * dt));
+    plane.rotateY(toRad(rudderPosition * speed * dt));
+
+
     // Move the plane forward in the local space
     plane.translateZ(-speed * dt);
 
@@ -64,7 +78,7 @@ function movePlane(dt) {
         fallSpeed = 0;
 
         // Limit plane rotations on the ground
-        // TODO: fix this, proably can't use plane.rotation here
+        // TODO: fix this, probably can't use plane.rotation here
         // TODO: do this smoothly
         /*if (plane.rotation.z > 0.2) {
             plane.rotation.z = 0.2;

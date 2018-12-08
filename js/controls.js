@@ -2,28 +2,69 @@
 
 function parseControls(dt) {
 
-    // Left and right should roll the plane
+    // Left and right change the aileron position
     if (keyboard.pressed("left")) {
-        plane.rotateZ(toRad(speed * dt));
-    }
-    if (keyboard.pressed("right")) {
-        plane.rotateZ(-toRad(speed * dt));
+        aileronPosition = Math.min(
+            aileronPosition + aileronSpeed,
+            maxAileronPosition
+        );
+    } else if (keyboard.pressed("right")) {
+        aileronPosition = Math.max(
+            aileronPosition - aileronSpeed,
+            -maxAileronPosition
+        );
+    } else {
+        if (aileronPosition > aileronSpeed) {
+            aileronPosition -= aileronSpeed;
+        } else if (aileronPosition < -aileronSpeed) {
+            aileronPosition += aileronSpeed;
+        } else {
+            aileronPosition = 0;
+        }
     }
 
-    // Up and down should pitch the plane
+    // Up and down change the elevator position
     if (keyboard.pressed("up")) {
-        plane.rotateX(-toRad(speed * dt));
-    }
-    if (keyboard.pressed("down")) {
-        plane.rotateX(toRad(speed * dt));
+        elevatorPosition = Math.max(
+            elevatorPosition - elevatorSpeed,
+            -maxElevatorPosition
+        )
+    } else if (keyboard.pressed("down")) {
+        elevatorPosition = Math.min(
+            elevatorPosition + elevatorSpeed,
+            maxElevatorPosition
+        )
+    } else {
+        if (elevatorPosition > elevatorSpeed) {
+            elevatorPosition -= elevatorSpeed;
+        } else if (elevatorPosition < -elevatorSpeed) {
+            elevatorPosition += elevatorSpeed;
+        } else {
+            elevatorPosition = 0;
+        }
     }
 
-    // Q and E should yaw the plane
+    // Q and E change the rudder position
     if (keyboard.pressed("q")) {
-        plane.rotateY(toRad(speed * dt));
-    }
-    if (keyboard.pressed("e")) {
-        plane.rotateY(-toRad(speed * dt));
+        //plane.rotateY(toRad(speed * dt));
+        rudderPosition = Math.min(
+            rudderPosition + rudderSpeed,
+            maxRudderPosition
+        )
+    } else if (keyboard.pressed("e")) {
+        //plane.rotateY(-toRad(speed * dt));
+        rudderPosition = Math.max(
+            rudderPosition - rudderSpeed,
+            -maxRudderPosition
+        )
+    } else {
+        if (rudderPosition > rudderSpeed) {
+            rudderPosition -= rudderSpeed;
+        } else if (rudderPosition < -rudderSpeed) {
+            rudderPosition += rudderSpeed;
+        } else {
+            rudderPosition = 0;
+        }
     }
 
     // W and S accelerate and decelerate

@@ -9,14 +9,9 @@ var plane, environment, ring, nextRing;
 var noisefn = noise.simplex2;
 var collidableMeshList = []; // all meshes that should be collidable
 
-var speed = 0;
-var fallSpeed = 0;
-var throttle = 0;
-var score = 0;
-
-var stats = new Stats();
-stats.showPanel( 1 );
-document.body.appendChild( stats.dom );
+//var stats = new Stats();
+//stats.showPanel(1);
+//document.body.appendChild(stats.dom);
 
 function onLoad() {
     var canvasContainer = document.getElementById("myCanvasContainer");
@@ -32,7 +27,7 @@ function onLoad() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(80, width / height, 1, 1000);
-    camera.up = new THREE.Vector3(0, 1, 0);
+    //camera.up = new THREE.Vector3(0, 1, 0);
 
     // environment.js
     environment = addEnvironment(noisefn);
@@ -53,7 +48,7 @@ function onLoad() {
 }
 
 function draw() {
-    stats.begin();
+    //stats.begin();
 
     let dt = clock.getDelta();
     //let time = clock.getElapsedTime();
@@ -65,24 +60,27 @@ function draw() {
     movePlane(dt, speed);
 
     // collision.js
-    detectCollisions(plane, collidableMeshList, handleCollision);
+    //detectCollisions(plane, collidableMeshList, handleCollision);
     // detecting when plane flies through ring
-    detectCollisions(plane.children[0], [ring.children[0]], handlePlaneThroughRing); 
+    //detectCollisions(plane.children[0], [ring.children[0]], handlePlaneThroughRing);
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = round(1 / dt);
     document.getElementById("speed").innerHTML = round(speed);
     document.getElementById("score").innerHTML = score;
-    //document.getElementById("fallSpeed").innerHTML = round(fallSpeed);
-    //var pdir = plane.getWorldDirection(new THREE.Vector3(0, 1, 0));
-    //document.getElementById("planeDirection").innerHTML = round(pdir.x) + ", " + round(pdir.y) + ", " + round(pdir.z);
-    //document.getElementById("planeRotation").innerHTML = round(plane.rotation.x) + ", " + round(plane.rotation.y) + ", " + round(plane.rotation.z);
+    document.getElementById("fallSpeed").innerHTML = round(fallSpeed);
+    var pdir = plane.getWorldDirection(new THREE.Vector3(0, 1, 0));
+    document.getElementById("planeDirection").innerHTML = round(pdir.x) + ", " + round(pdir.y) + ", " + round(pdir.z);
+    document.getElementById("planeRotation").innerHTML = round(plane.rotation.x) + ", " + round(plane.rotation.y) + ", " + round(plane.rotation.z);
+    document.getElementById("aileronPosition").innerHTML = round(aileronPosition);
+    document.getElementById("elevatorPosition").innerHTML = round(elevatorPosition);
+    document.getElementById("rudderPosition").innerHTML = round(rudderPosition);
 
 
     requestAnimationFrame(draw);
     renderer.render(scene, camera);
 
-    stats.end();
+    //stats.end();
 }
 
 // Converts degrees to radians

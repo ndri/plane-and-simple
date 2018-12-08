@@ -25,7 +25,7 @@ function getRing(isActive) {
  */
 function handlePlaneThroughRing() {
     x = Math.random() * worldSize - worldSize / 2;
-    y = Math.random() * 60 + 40;
+    y = Math.random() * 100 + 20;
     z = Math.random() * worldSize - worldSize / 2;
     // r = Math.random() * 9 + 1
     ring.position.set(x, y, z);
