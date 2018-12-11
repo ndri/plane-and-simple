@@ -9,7 +9,7 @@ const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
 
 // Plane
 const startX = 0;
-const startY = 0;
+const startY = 10;
 const startZ = 93;
 const gravity = 0.5;
 const minSpeed = -10;

@@ -6,8 +6,9 @@ var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
 
 var plane, environment, ring, nextRing;
+var world, physicsPlane, physicsGround; // cannonjs stuff
+
 var noisefn = noise.simplex2;
-var collidableMeshList = []; // all meshes that should be collidable
 
 //var stats = new Stats();
 //stats.showPanel(1);
@@ -29,6 +30,11 @@ function onLoad() {
     camera = new THREE.PerspectiveCamera(80, width / height, 1, 1000);
     //camera.up = new THREE.Vector3(0, 1, 0);
 
+    // creating the cannonjs world
+    world = new CANNON.World();
+    world.broadphase = new CANNON.NaiveBroadphase();
+    world.gravity.set(0, -15, 0);
+
     // environment.js
     environment = addEnvironment(noisefn);
     scene.add(environment);
@@ -36,7 +42,9 @@ function onLoad() {
     // plane.js
     plane = addPlane(camera);
     scene.add(plane);
-    plane.position.set(startX, startY, startZ);
+    // setting the cannonjs plane position
+    // the threejs plane's position will be set equal to this in the draw() function
+    physicsPlane.position.set(-30, 90, 0);
 
     // ring.js
     ring = getRing(true);
@@ -48,21 +56,23 @@ function onLoad() {
 }
 
 function draw() {
+    console.log(physicsPlane.velocity);
     //stats.begin();
 
     let dt = clock.getDelta();
+    
+    world.step(1 / 60); // TODO: is this correct?
     //let time = clock.getElapsedTime();
 
+    // linking the threejs and cannonjs planes
+    plane.position.copy(physicsPlane.position);
+    physicsPlane.quaternion.toEuler(plane.rotation);
+
     // controls.js
-    parseControls(dt, camera);
+    parseControlsTest(dt);
 
     // plane.js
-    movePlane(dt, speed);
-
-    // collision.js
-    //detectCollisions(plane, collidableMeshList, handleCollision);
-    // detecting when plane flies through ring
-    //detectCollisions(plane.children[0], [ring.children[0]], handlePlaneThroughRing);
+    // movePlane(dt, speed);
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = round(1 / dt);
@@ -91,4 +101,18 @@ function toRad(degree) {
 // Rounds float to 2 decimal places
 function round(n) {
     return Math.round(n * 100) / 100;
+}
+
+// Rotates a matrix (anti-clock)
+function rotateMatrix(matrix) {    
+    const n = matrix.length;
+    let res = []
+    for (let i = 0; i < n; ++i) {
+      for (let j = 0; j < n; ++j) {
+         if (!res[j])
+           res[j] = []
+         res[j][i] = matrix[n-1-i][j];
+      }
+    }
+    return res;
 }

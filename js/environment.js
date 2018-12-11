@@ -28,7 +28,12 @@ function addEnvironment(noisefn) {
         flatShading: true,
         shininess: 3
     });
-    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 450, 450);
+
+    // matrix where the heights will be saved for the cannonjs heightfield
+    var matrix = [];
+    var matrixRow = [];
+
+    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / 4, worldSize / 4);
     for (let i = 0; i < geometry.vertices.length; i++) {
         let v = geometry.vertices[i];
         v.z += noisefn(v.x * 0.01, v.y * 0.01) * 20;
@@ -45,12 +50,37 @@ function addEnvironment(noisefn) {
             // console.log("X: " + v.x + " ABS: " + Math.abs(v.x / 72) + " COS: " + (Math.cos((v.x / 72) * Math.PI) + 1) / 2);
             v.z *= Math.abs(v.x / 72);
             v.z -= 5.8 * (Math.cos((v.x / 72) * Math.PI) + 1) / 2;
+            
         }
+
+        // saving the height
+        let height = 200 + v.z;
+
+        matrixRow.push(height);
+        if (matrixRow.length === worldSize / 4 + 1) {
+            matrix.push(matrixRow);
+            matrixRow = [];
+        } 
     }
 
     terrain = new THREE.Mesh(geometry, material);
     terrain.rotation.set(-toRad(90), 0, 0);
     scene.add(terrain);
+
+    // physical representation of the terrain using a cannonjs heightfield
+    // TODO: collision seems to be inaccurate at some angles
+    // rotating the matrix is necessary to line it up with the terrain
+    matrix = rotateMatrix(matrix);
+    var hfShape = new CANNON.Heightfield(matrix, {
+        elementSize: 4
+    });
+    var hfBody = new CANNON.Body({
+        mass: 0
+    });
+    hfBody.addShape(hfShape);
+    hfBody.position.set(-(worldSize / 2), -200, worldSize / 2);
+    hfBody.quaternion.setFromEuler(-(Math.PI / 2), 0, 0);
+    world.addBody(hfBody);
 
 
     // runway
@@ -61,6 +91,17 @@ function addEnvironment(noisefn) {
     road.position.set(0, -2, 40);
     runway.add(road);
     scene.add(runway);
+    
+    // physical representation of the runway
+    var runwayBody = new CANNON.Body({
+        position: new CANNON.Vec3(0, -1, 0),
+        shape: new CANNON.Box(new CANNON.Vec3(11, 1, 145)),
+        material: new CANNON.Material({friction: 0.0})
+    });
+    world.addBody(runwayBody);
+
+
+
 
 
     // trees

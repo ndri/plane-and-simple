@@ -28,6 +28,18 @@ function addPlane(camera) {
     camera.lookAt(body.position);
     body.add(camera);
 
+    // physical representation of the plane for cannonjs
+    var cannonBody = new CANNON.Body({
+        mass: 10, // kg
+        position: new CANNON.Vec3(100, 110, 40),
+        shape: new CANNON.Box(new CANNON.Vec3(1, 1, 5)),
+        material: new CANNON.Material({friction: 0.0})
+    });
+    cannonBody.addShape(new CANNON.Box(new CANNON.Vec3(10, 0.25, 1.5)), new CANNON.Vec3(0, 1.25, -2));
+    cannonBody.addShape(new CANNON.Box(new CANNON.Vec3(3, 0.25, 1)), new CANNON.Vec3(0, 1.25, 4));
+    physicsPlane = cannonBody;
+    world.addBody(physicsPlane);
+
     return body;
 }
 
@@ -64,8 +76,10 @@ function movePlane(dt) {
 
     // Move the plane forward in the local space
     plane.translateZ(-speed * dt);
+    // physicsPlane.velocity.z = -speed * dt;
 
     // Detect whether the plane is airborne
+
     if (plane.position.y > 1.0) {
         // Move the plane down in the world space based on fallSpeed
         plane.position.y -= fallSpeed * dt;

@@ -1,5 +1,6 @@
 // TODO: proper controls
 
+
 function parseControls(dt) {
 
     // Left and right change the aileron position
@@ -87,4 +88,52 @@ function parseControls(dt) {
         speed = fallSpeed = throttle = 0;
         plane.rotation.set(0, 0, 0);
     }
+}
+
+
+function parseControlsTest(dt) {
+    let inputVelocity = new CANNON.Vec3();
+    let inputQuat = new CANNON.Quaternion();
+    // velocity factor
+    let vF = 1;
+    // quaternion factor
+    let qF = 0.01;
+
+    // W and S accelerate and decelerate
+    if (keyboard.pressed("w")) {
+        inputVelocity.z = -vF;
+    } else if (keyboard.pressed("s")) {
+        inputVelocity.z = vF;
+    }
+
+    // Up and down change the elevator position
+    if (keyboard.pressed("up")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -qF);
+    } else if (keyboard.pressed("down")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), qF);
+    }
+
+    // Q and E change the rudder position
+    if (keyboard.pressed("q")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), qF);
+    } else if (keyboard.pressed("e")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -qF);
+    }
+
+    // Space resets the plane to runway
+    if (keyboard.pressed("space")) {
+        physicsPlane.position.set(startX, startY, startZ);
+        speed = fallSpeed = throttle = 0;
+        physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
+        physicsPlane.quaternion.setFromEuler(0, 0, 0);
+    }
+    let worldQuaternion = physicsPlane.quaternion.vmult(inputQuat);
+    physicsPlane.quaternion.x += worldQuaternion.x;
+    physicsPlane.quaternion.y += worldQuaternion.y;
+    physicsPlane.quaternion.z += worldQuaternion.z;
+
+    let worldVelocity = physicsPlane.quaternion.vmult(inputVelocity);
+    physicsPlane.velocity.x += worldVelocity.x;
+    physicsPlane.velocity.y += worldVelocity.y;
+    physicsPlane.velocity.z += worldVelocity.z;
 }

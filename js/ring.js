@@ -4,7 +4,6 @@ function getRing(isActive) {
     var torus = new THREE.Mesh(geometry, material);
 
     if (isActive) {
-        collidableMeshList.push(torus);
         // invisbile circle, used in draw() to detect when the plane flies through the ring
         var geometry = new THREE.CircleGeometry(20, 20);
         var material = new THREE.MeshBasicMaterial();
