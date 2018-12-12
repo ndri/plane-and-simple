@@ -1,16 +1,24 @@
 // Game
-const gameWidth = 800;
-const gameHeight = 500;
+// const gameWidth = 800;
+const gameWidth = document.documentElement.clientWidth - 20;
+// const gameHeight = 500;
+const gameHeight = document.documentElement.clientHeight - 200;
+//TODO: better canvas size (current not responsive)
 
 // World
-const worldSize = 1000; // Side length of the square world
+const worldSize = 3000; // Side length of the square world
+const viewDistance = 2000;
 const treeAmount = 10; // (2*treeAmount)^2 trees will be created
 const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
 
 // Plane
-const startX = 0;
-const startY = 0;
-const startZ = 93;
+const startPosX = -1500;
+const startPosY = 0;
+const startPosZ = -300;
+const startRotX = Math.PI;
+const startRotY = - Math.PI / 2;
+const startRotZ = Math.PI;
+
 const gravity = 0.5;
 const minSpeed = -10;
 const maxSpeed = 100;

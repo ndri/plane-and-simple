@@ -26,17 +26,18 @@ function onLoad() {
 
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(80, width / height, 1, 1000);
+    camera = new THREE.PerspectiveCamera(80, width / height, 1, viewDistance);
     //camera.up = new THREE.Vector3(0, 1, 0);
 
     // environment.js
-    environment = addEnvironment(noisefn);
+    [environment, water] = addEnvironment(noisefn);
     scene.add(environment);
 
     // plane.js
     plane = addPlane(camera);
     scene.add(plane);
-    plane.position.set(startX, startY, startZ);
+    plane.position.set(startPosX, startPosY, startPosZ);
+    plane.rotation.set(startRotX, startRotY, startRotZ);
 
     // ring.js
     ring = getRing(true);
@@ -58,6 +59,9 @@ function draw() {
 
     // plane.js
     movePlane(dt, speed);
+
+    // e
+    moveWater();
 
     // collision.js
     //detectCollisions(plane, collidableMeshList, handleCollision);

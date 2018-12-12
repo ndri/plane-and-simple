@@ -83,8 +83,8 @@ function parseControls(dt) {
         // plane.position.set(newX, 1, newZ);
         // plane.rotation.set(0, plane.rotation.y, 1000);
 
-        plane.position.set(startX, startY, startZ);
+        plane.position.set(startPosX, startPosY, startPosZ);
+        plane.rotation.set(startRotX, startRotY, startRotZ);
         speed = fallSpeed = throttle = 0;
-        plane.rotation.set(0, 0, 0);
     }
 }

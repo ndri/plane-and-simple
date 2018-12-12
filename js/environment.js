@@ -1,22 +1,23 @@
 function addEnvironment(noisefn) {
     let environment = new THREE.Object3D();
 
-
     // water
-    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 1);
+    var geometry = new THREE.PlaneGeometry(viewDistance * 3, viewDistance * 3, 1);
     var material = new THREE.MeshPhongMaterial({color: 0x3490DC, shininess: 80});
-    var floor = new THREE.Mesh(geometry, material);
-    floor.rotation.set(-toRad(90), 0, 0);
-    floor.position.set(0, -2.0, 0);
-    environment.add(floor);
+    var water = new THREE.Mesh(geometry, material);
+    water.rotation.set(-toRad(90), 0, 0);
+    environment.add(water);
+
+    scene.fog = new THREE.Fog( 0x6bc0ff, 10, viewDistance );
+    renderer.setClearColor( scene.fog.color, 1 );
 
 
     // lights
-    dirLight = new THREE.DirectionalLight(0xfffeee, 0.95);
+    let dirLight = new THREE.DirectionalLight(0xfffeee, 0.95);
     dirLight.position.set(200, 400, 0);
     scene.add(dirLight);
 
-    ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+    let ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
     ambientLight.position.set(0, 0, 0);
     scene.add(ambientLight);
 
@@ -28,28 +29,52 @@ function addEnvironment(noisefn) {
         flatShading: true,
         shininess: 3
     });
-    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 450, 450);
+    var geometry = new THREE.PlaneGeometry(worldSize / 1.2, worldSize / 1.2, 450, 450);
     for (let i = 0; i < geometry.vertices.length; i++) {
         let v = geometry.vertices[i];
-        v.z += noisefn(v.x * 0.01, v.y * 0.01) * 20;
-        v.z += noisefn(v.x * 0.03, v.y * 0.03) * 2;
-        v.z += noisefn(v.x * 0.006, v.y * 0.006) * 30;
-        v.z += noisefn(v.x * 0.1, v.y * 0.1) * 0.7;
+        // let x = v.x + 1000;
+        // let y = v.y + 1000;
+        let x = v.x * 0.46;
+        let y = v.y * 0.46;
 
-        if (v.z < -7) {
-            v.z = -7;
+        v.z += noisefn(x * 0.003, y * 0.002) * 30 + 6;
+        v.z += noisefn(x * 0.005, y * 0.005) * 20;
+        v.z += noisefn(x * 0.03, y * 0.03) * 2;
+        v.z += noisefn(x * 0.01, y * 0.01) * 10;
+        v.z += noisefn(x * 0.1, y * 0.1) * 0.7;
+        v.z *= 3;
+
+        let xpow = Math.pow(v.x, 2);
+        let ypow = Math.pow(v.y, 2);
+        let rpow = Math.pow(worldSize/2, 2);
+        let rline = xpow + ypow;
+
+        // v.z = 400;
+
+        // lower area outside of island circle
+        if (rline / rpow > 1) {
+            v.z = 0;
+        } else {
+            v.z *= Math.pow(Math.cos((rline / (rpow * 2)) * Math.PI), 1.8);
         }
 
-        // temporary hole for runway
-        if (v.x > -80 && v.y > -185 && v.x < 80 && v.y < 185) {
-            // console.log("X: " + v.x + " ABS: " + Math.abs(v.x / 72) + " COS: " + (Math.cos((v.x / 72) * Math.PI) + 1) / 2);
-            v.z *= Math.abs(v.x / 72);
-            v.z -= 5.8 * (Math.cos((v.x / 72) * Math.PI) + 1) / 2;
+        // make center of island higher
+        if (rline / rpow > 0.5) {
+            v.z += 0;
+        } else {
+            v.z += Math.pow(Math.cos((rline / rpow) * Math.PI), 2) * 100;
         }
+
+        if (v.z < 0) {
+            v.z = 0;
+        }
+
+        v.z -= 10;
     }
 
     terrain = new THREE.Mesh(geometry, material);
     terrain.rotation.set(-toRad(90), 0, 0);
+    terrain.scale.set(1.2, 1.2, 1);
     scene.add(terrain);
 
 
@@ -112,5 +137,10 @@ function addEnvironment(noisefn) {
         }
     }
 
-    return environment;
+    return [environment, water];
+}
+
+function moveWater() {
+    water.position.x = plane.position.x;
+    water.position.z = plane.position.z;
 }
