@@ -84,20 +84,22 @@ function parseControls(dt) {
         // plane.position.set(newX, 1, newZ);
         // plane.rotation.set(0, plane.rotation.y, 1000);
 
-        plane.position.set(startX, startY, startZ);
+        physicsPlane.position.set(startX, startY, startZ);
         speed = fallSpeed = throttle = 0;
         plane.rotation.set(0, 0, 0);
+        physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
+        physicsPlane.quaternion.setFromEuler(0, 0, 0);
     }
 }
 
 
-function parseControlsTest(dt) {
+/*function parseControlsTest(dt) {
     let inputVelocity = new CANNON.Vec3();
     let inputQuat = new CANNON.Quaternion();
     // velocity factor
     let vF = 1;
     // quaternion factor
-    let qF = 0.01;
+    let qF = 0.05;
 
     // W and S accelerate and decelerate
     if (keyboard.pressed("w")) {
@@ -111,6 +113,13 @@ function parseControlsTest(dt) {
         inputQuat.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -qF);
     } else if (keyboard.pressed("down")) {
         inputQuat.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), qF);
+    }
+
+    // Left and right change the aileron position
+    if (keyboard.pressed("left")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), qF);
+    } else if (keyboard.pressed("right")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), -qF);
     }
 
     // Q and E change the rudder position
@@ -136,4 +145,4 @@ function parseControlsTest(dt) {
     physicsPlane.velocity.x += worldVelocity.x;
     physicsPlane.velocity.y += worldVelocity.y;
     physicsPlane.velocity.z += worldVelocity.z;
-}
+}*/

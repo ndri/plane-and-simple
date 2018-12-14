@@ -33,9 +33,11 @@ function onLoad() {
     // creating the cannonjs world
     world = new CANNON.World();
     world.broadphase = new CANNON.NaiveBroadphase();
-    world.gravity.set(0, -15, 0);
+    world.gravity.set(0, 7 * -9.82, 0);
+    //world.gravity.set(0, 0, 0);
 
     // environment.js
+    noise.seed(Math.random());
     environment = addEnvironment(noisefn);
     scene.add(environment);
 
@@ -44,7 +46,7 @@ function onLoad() {
     scene.add(plane);
     // setting the cannonjs plane position
     // the threejs plane's position will be set equal to this in the draw() function
-    physicsPlane.position.set(-30, 90, 0);
+    physicsPlane.position.set(startX, startY, startZ);
 
     // ring.js
     ring = getRing(true);
@@ -56,23 +58,24 @@ function onLoad() {
 }
 
 function draw() {
-    console.log(physicsPlane.velocity);
+    //console.log(physicsPlane.velocity);
     //stats.begin();
 
     let dt = clock.getDelta();
     
-    world.step(1 / 60); // TODO: is this correct?
+    world.step(dt);
     //let time = clock.getElapsedTime();
 
     // linking the threejs and cannonjs planes
     plane.position.copy(physicsPlane.position);
-    physicsPlane.quaternion.toEuler(plane.rotation);
+    plane.quaternion.copy(physicsPlane.quaternion);
+    //physicsPlane.quaternion.toEuler(plane.rotation);
 
     // controls.js
-    parseControlsTest(dt);
+    parseControls(dt);
 
     // plane.js
-    // movePlane(dt, speed);
+    movePlane(dt);
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = round(1 / dt);
@@ -85,6 +88,7 @@ function draw() {
     document.getElementById("aileronPosition").innerHTML = round(aileronPosition);
     document.getElementById("elevatorPosition").innerHTML = round(elevatorPosition);
     document.getElementById("rudderPosition").innerHTML = round(rudderPosition);
+    document.getElementById("throttle").innerHTML = round(throttle);
 
 
     requestAnimationFrame(draw);
