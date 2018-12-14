@@ -1,7 +1,4 @@
-// TODO: proper controls
-
-
-function parseControls(dt) {
+function parseControls() {
 
     // Left and right change the aileron position
     if (keyboard.pressed("left")) {
@@ -84,7 +81,7 @@ function parseControls(dt) {
         // plane.position.set(newX, 1, newZ);
         // plane.rotation.set(0, plane.rotation.y, 1000);
 
-        physicsPlane.position.set(startX, startY, startZ);
+        physicsPlane.position.set(startPosX, startPosY, startPosZ);
         physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
         physicsPlane.quaternion.setFromEuler(0, 0, 0);
         plane.position.set(startPosX, startPosY, startPosZ);

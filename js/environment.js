@@ -32,8 +32,8 @@ function addEnvironment(noisefn) {
     var matrix = [];
     var matrixRow = [];
 
-    //var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / 4, worldSize / 4);
-    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 450, 450);
+    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / 4, worldSize / 4);
+    //var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 450, 450);
 
     let maxHeight = 0;
 

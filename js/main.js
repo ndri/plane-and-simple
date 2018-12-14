@@ -47,7 +47,7 @@ function onLoad() {
     scene.add(plane);
     // setting the cannonjs plane position
     // the threejs plane's position will be set equal to this in the draw() function
-    physicsPlane.position.set(startX, startY, startZ);
+    physicsPlane.position.set(startPosX, startPosY, startPosZ);
     plane.position.set(startPosX, startPosY, startPosZ);
     //plane.rotation.set(startRotX, startRotY, startRotZ);
 
@@ -72,10 +72,9 @@ function draw() {
     // linking the threejs and cannonjs planes
     plane.position.copy(physicsPlane.position);
     plane.quaternion.copy(physicsPlane.quaternion);
-    //physicsPlane.quaternion.toEuler(plane.rotation);
 
     // controls.js
-    parseControls(dt);
+    parseControls();
 
     // plane.js
     movePlane(dt);

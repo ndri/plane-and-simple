@@ -47,7 +47,7 @@ function addPlane(camera) {
 
 function movePlane(dt) {
 
-    var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * 1000000 * dt);
+    var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * 2000000 * dt);
     accelerationImpulse = physicsPlane.quaternion.vmult(accelerationImpulse);
 
     var planeCenter = new CANNON.Vec3(
