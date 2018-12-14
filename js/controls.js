@@ -1,5 +1,6 @@
 // TODO: proper controls
 
+
 function parseControls(dt) {
 
     // Left and right change the aileron position
@@ -83,8 +84,65 @@ function parseControls(dt) {
         // plane.position.set(newX, 1, newZ);
         // plane.rotation.set(0, plane.rotation.y, 1000);
 
+        physicsPlane.position.set(startX, startY, startZ);
+        physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
+        physicsPlane.quaternion.setFromEuler(0, 0, 0);
         plane.position.set(startPosX, startPosY, startPosZ);
-        plane.rotation.set(startRotX, startRotY, startRotZ);
-        speed = fallSpeed = throttle = 0;
+        //plane.rotation.set(startRotX, startRotY, startRotZ);
     }
 }
+
+
+/*function parseControlsTest(dt) {
+    let inputVelocity = new CANNON.Vec3();
+    let inputQuat = new CANNON.Quaternion();
+    // velocity factor
+    let vF = 1;
+    // quaternion factor
+    let qF = 0.05;
+
+    // W and S accelerate and decelerate
+    if (keyboard.pressed("w")) {
+        inputVelocity.z = -vF;
+    } else if (keyboard.pressed("s")) {
+        inputVelocity.z = vF;
+    }
+
+    // Up and down change the elevator position
+    if (keyboard.pressed("up")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -qF);
+    } else if (keyboard.pressed("down")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), qF);
+    }
+
+    // Left and right change the aileron position
+    if (keyboard.pressed("left")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), qF);
+    } else if (keyboard.pressed("right")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), -qF);
+    }
+
+    // Q and E change the rudder position
+    if (keyboard.pressed("q")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), qF);
+    } else if (keyboard.pressed("e")) {
+        inputQuat.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -qF);
+    }
+
+    // Space resets the plane to runway
+    if (keyboard.pressed("space")) {
+        physicsPlane.position.set(startX, startY, startZ);
+        speed = fallSpeed = throttle = 0;
+        physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
+        physicsPlane.quaternion.setFromEuler(0, 0, 0);
+    }
+    let worldQuaternion = physicsPlane.quaternion.vmult(inputQuat);
+    physicsPlane.quaternion.x += worldQuaternion.x;
+    physicsPlane.quaternion.y += worldQuaternion.y;
+    physicsPlane.quaternion.z += worldQuaternion.z;
+
+    let worldVelocity = physicsPlane.quaternion.vmult(inputVelocity);
+    physicsPlane.velocity.x += worldVelocity.x;
+    physicsPlane.velocity.y += worldVelocity.y;
+    physicsPlane.velocity.z += worldVelocity.z;
+}*/
