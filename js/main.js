@@ -27,7 +27,7 @@ function onLoad() {
 
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(80, width / height, 1, 1000);
+    camera = new THREE.PerspectiveCamera(80, width / height, 1, viewDistance);
     //camera.up = new THREE.Vector3(0, 1, 0);
 
     // creating the cannonjs world
@@ -39,6 +39,7 @@ function onLoad() {
     // environment.js
     noise.seed(Math.random());
     environment = addEnvironment(noisefn);
+    [environment, water] = addEnvironment(noisefn);
     scene.add(environment);
 
     // plane.js
@@ -47,6 +48,8 @@ function onLoad() {
     // setting the cannonjs plane position
     // the threejs plane's position will be set equal to this in the draw() function
     physicsPlane.position.set(startX, startY, startZ);
+    plane.position.set(startPosX, startPosY, startPosZ);
+    //plane.rotation.set(startRotX, startRotY, startRotZ);
 
     // ring.js
     ring = getRing(true);
@@ -76,6 +79,14 @@ function draw() {
 
     // plane.js
     movePlane(dt);
+    //movePlane(dt, speed);
+
+    moveWater();
+
+    // collision.js
+    //detectCollisions(plane, collidableMeshList, handleCollision);
+    // detecting when plane flies through ring
+    //detectCollisions(plane.children[0], [ring.children[0]], handlePlaneThroughRing);
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = round(1 / dt);

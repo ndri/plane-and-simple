@@ -85,10 +85,10 @@ function parseControls(dt) {
         // plane.rotation.set(0, plane.rotation.y, 1000);
 
         physicsPlane.position.set(startX, startY, startZ);
-        speed = fallSpeed = throttle = 0;
-        plane.rotation.set(0, 0, 0);
         physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
         physicsPlane.quaternion.setFromEuler(0, 0, 0);
+        plane.position.set(startPosX, startPosY, startPosZ);
+        //plane.rotation.set(startRotX, startRotY, startRotZ);
     }
 }
 

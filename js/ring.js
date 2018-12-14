@@ -15,8 +15,11 @@ function getRing(isActive) {
         material.transparent = true;
         material.opacity = 0.3;
     }
-    
-    return torus; 
+
+    torus.position.set(startPosX + 500, startPosY + 100, startPosZ);
+    torus.rotation.set(startRotX, startRotY, startRotZ);
+
+    return torus;
 }
 
 /**
@@ -24,7 +27,7 @@ function getRing(isActive) {
  */
 function handlePlaneThroughRing() {
     x = Math.random() * worldSize - worldSize / 2;
-    y = Math.random() * 100 + 20;
+    y = Math.random() * 100 + 300;
     z = Math.random() * worldSize - worldSize / 2;
     // r = Math.random() * 9 + 1
     ring.position.set(x, y, z);
