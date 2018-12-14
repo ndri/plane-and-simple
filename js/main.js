@@ -33,7 +33,7 @@ function onLoad() {
     // creating the cannonjs world
     world = new CANNON.World();
     world.broadphase = new CANNON.NaiveBroadphase();
-    world.gravity.set(0, 7 * -9.82, 0);
+    world.gravity.set(0, 10 * -9.82, 0);
     //world.gravity.set(0, 0, 0);
 
     // environment.js
