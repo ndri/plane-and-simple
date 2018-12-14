@@ -45,6 +45,8 @@ function addPlane(camera) {
     return body;
 }
 
+
+
 function movePlane(dt) {
 
     var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * 2000000 * dt);
@@ -59,7 +61,9 @@ function movePlane(dt) {
 
 
     var directionVector = new CANNON.Vec3(
-        elevatorPosition, rudderPosition, aileronPosition
+        elevatorPosition * elevatorPower * dt,
+        rudderPosition * rudderPower * dt,
+        aileronPosition * aileronPower * dt
     );
     directionVector = physicsPlane.quaternion.vmult(directionVector);
 
