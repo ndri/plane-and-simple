@@ -7,7 +7,7 @@ const controllerType = {
 // Controls settings object
 let controls = {
     // which controller type is currently being used (keyboard or gamepad)
-    type: controllerType.keyboard,
+    type: controllerType.gamepad,
 
     // Keyboard control keys
     keyboard: {

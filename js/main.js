@@ -33,11 +33,13 @@ function onLoad() {
     // creating the cannonjs world
     world = new CANNON.World();
     world.broadphase = new CANNON.NaiveBroadphase();
-    world.gravity.set(0, 10 * -9.82, 0);
-    //world.gravity.set(0, 0, 0);
+    //world.gravity.set(0, 10 * -9.82, 0);
+    world.gravity.set(0, 0, 0);
 
     // environment.js
-    noise.seed(Math.random());
+    let seed = Math.random();
+    console.log("Seed: " + seed)
+    noise.seed(seed);
     environment = addEnvironment(noisefn);
     [environment, water] = addEnvironment(noisefn);
     scene.add(environment);
