@@ -97,8 +97,10 @@ function addPlane(camera) {
     cannonBody.addShape(new CANNON.Box(new CANNON.Vec3(10, 0.25, 1.5)), new CANNON.Vec3(0, 1.25, -2));
     cannonBody.addShape(new CANNON.Box(new CANNON.Vec3(3, 0.25, 1)), new CANNON.Vec3(0, 1.25, 4));
     physicsPlane = cannonBody;
-    world.addBody(physicsPlane);
+    physicsPlane.linearDamping = 0.81;
+    physicsPlane.angularDamping = 0.0;
 
+    world.addBody(physicsPlane);
     return body;
 }
 
@@ -106,7 +108,7 @@ function addPlane(camera) {
 
 function movePlane(dt) {
 
-    var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * 2000000 * dt);
+    var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * 200000 * dt);
     accelerationImpulse = physicsPlane.quaternion.vmult(accelerationImpulse);
 
     var planeCenter = new CANNON.Vec3(
@@ -129,8 +131,6 @@ function movePlane(dt) {
     );
 
     // TODO: linearDamping should be lower, so the plane keeps going when throttle is release, but then it glides a lot so idk
-    physicsPlane.linearDamping = 0.99;
-    physicsPlane.angularDamping = 0.0;
 
     // Rotate the propeller
     plane.children[3].rotation.set(0, 0, plane.children[3].rotation.z + throttle);

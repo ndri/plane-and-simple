@@ -43,7 +43,8 @@ function handlePlaneThroughRing() {
     nextRingPosition.add(nextRingSpacing);
     // to avoid the ring from clipping into the ground, the height data has to be found for the xz-position
     if (Math.abs(nextRingPosition.x) < worldSize / 2 && Math.abs(nextRingPosition.z) < worldSize / 2) {
-        var heightAtNextRing = heightfieldMatrix[Math.round((worldSize / 2 + nextRingPosition.x) / 4)][Math.round((worldSize / 2 - nextRingPosition.z) / 4)] - 200;
+        var heightAtNextRing = heightfieldMatrix[Math.round((worldSize / 2 + nextRingPosition.x) / (slices * meshSlices))][Math.round((worldSize / meshSlices - nextRingPosition.z) / (slices * meshSlices))] - 200;
+        // Asendasin 4 -> (slices * meshSlices), aga pole aimugi kas see õige. Ennem lihtsalt crashis, kui liiga vähe vertexeid oli
         nextRingPosition.y = Math.max(heightAtNextRing + 35, nextRingPosition.y);
     }
     nextRing.position.copy(nextRingPosition);

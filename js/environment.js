@@ -28,12 +28,13 @@ function addEnvironment(noisefn) {
         vertexColors: THREE.VertexColors,
     });
 
-    // matrix where the heights will be saved for the cannonjs heightfield
-    heightfieldMatrix = [];
+    // heightfieldMatrix where the heights will be saved for the cannonjs heightfield
+    var heightfieldMatrix = [];
     var matrixRow = [];
 
-    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / 4, worldSize / 4);
-    //var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 450, 450);
+    // var meshSlices = 4; (in config)
+    // var slices = 4;
+    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / meshSlices, worldSize / meshSlices);
 
     let maxHeight = 0;
 
@@ -55,7 +56,7 @@ function addEnvironment(noisefn) {
         let rpow = Math.pow(worldSize / 2, 2);
         let rline = xpow + ypow;
 
-        // v.z = 400;
+        // v.z = 100;
 
         // lower area outside of island circle
         if (rline / rpow > 1) {
@@ -77,14 +78,9 @@ function addEnvironment(noisefn) {
             v.z = 0;
         }
 
-        // temporary hole for runway
-        /*if (v.x > -80 && v.y > -185 && v.x < 80 && v.y < 185) {
-            // console.log("X: " + v.x + " ABS: " + Math.abs(v.x / 72) + " COS: " + (Math.cos((v.x / 72) * Math.PI) + 1) / 2);
-            v.z *= Math.abs(v.x / 72);
-            v.z -= 5.8 * (Math.cos((v.x / 72) * Math.PI) + 1) / 2;*/
-            
-        // lower terrain to combat z-fighting
         v.z -= 10;
+
+        // v.z = 100;
 
         // find highest point of terrain (for coloring)
         if (v.z > maxHeight) {
@@ -94,12 +90,21 @@ function addEnvironment(noisefn) {
         // saving the height
         let height = 200 + v.z;
 
-        matrixRow.push(height);
-        if (matrixRow.length === worldSize / 4 + 1) {
-            heightfieldMatrix.push(matrixRow);
-            matrixRow = [];
-        } 
+        if (i % slices === 0) {
+            matrixRow.push(height);
+        }
+
+        if ((i + 1) % (worldSize / meshSlices + 1) === 0) {
+            if (i % slices === 0) {
+                heightfieldMatrix.push(matrixRow);
+            }
+                // console.log(i);
+            matrixRow = []
+        }
     }
+
+    console.log(heightfieldMatrix);
+
 
     // coloring vertices by height
     for (let i = 0; i < geometry.faces.length; i++) {
@@ -147,15 +152,17 @@ function addEnvironment(noisefn) {
 
     var terrain = new THREE.Mesh(geometry, material);
     terrain.rotation.set(-toRad(90), 0, 0);
+    terrain.name = "Terrain";
     scene.add(terrain);
 
     // physical representation of the terrain using a cannonjs heightfield
     // TODO: collision seems to be inaccurate at some angles
-    // rotating the matrix is necessary to line it up with the terrain
+    // rotating the heightfieldMatrix is necessary to line it up with the terrain
     heightfieldMatrix = rotateMatrix(heightfieldMatrix);
     var hfShape = new CANNON.Heightfield(heightfieldMatrix, {
-        elementSize: 4
+        elementSize: slices * meshSlices
     });
+
     var hfBody = new CANNON.Body({
         mass: 0
     });
@@ -163,27 +170,6 @@ function addEnvironment(noisefn) {
     hfBody.position.set(-(worldSize / 2), -200, worldSize / 2);
     hfBody.quaternion.setFromEuler(-(Math.PI / 2), 0, 0);
     world.addBody(hfBody);
-
-
-    // runway
-    var runway = new THREE.Object3D();
-    var geometry = new THREE.BoxGeometry(22, 2, 290);
-    var material = new THREE.MeshBasicMaterial({color: 0xaaaaaa});
-    var road = new THREE.Mesh(geometry, material);
-    road.position.set(0, -2, 40);
-    runway.add(road);
-    scene.add(runway);
-    
-    // physical representation of the runway
-    var runwayBody = new CANNON.Body({
-        position: new CANNON.Vec3(0, -1, 0),
-        shape: new CANNON.Box(new CANNON.Vec3(11, 1, 145)),
-        material: new CANNON.Material({friction: 0.0})
-    });
-    world.addBody(runwayBody);
-
-
-
 
 
     // trees
@@ -235,7 +221,7 @@ function addEnvironment(noisefn) {
         }
     }
 
-    return [environment, water];
+    return [environment, water, heightfieldMatrix];
 }
 
 function moveWater() {

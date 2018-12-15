@@ -6,7 +6,9 @@ const gameHeight = document.documentElement.clientHeight - 200;
 //TODO: better canvas size (current not responsive)
 
 // World
-const worldSize = 1600; // Side length of the square world
+const worldSize = 1200; // Side length of the square world
+var meshSlices = 4;
+var slices = 4;
 const viewDistance = 1000;
 const treeAmount = 10; // (2*treeAmount)^2 trees will be created
 const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
