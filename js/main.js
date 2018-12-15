@@ -8,6 +8,10 @@ var keyboard = new THREEx.KeyboardState();
 var plane, environment, ring, nextRing;
 var world, physicsPlane, physicsGround; // cannonjs stuff
 
+var heighfieldMatrix;
+
+var prevRingTime;
+
 var noisefn = noise.simplex2;
 
 //var stats = new Stats();
@@ -54,14 +58,17 @@ function onLoad() {
     // ring.js
     ring = getRing(true);
     scene.add(ring);
-    // nextRing = getRing(false);
-    // scene.add(nextRing);
+    prevRingTime = Date.now();
+    ring.position.copy(ringDetector.position);
+    nextRing = getRing(false);
+    nextRing.position.set(-10, 410, -110);
+    scene.add(nextRing);
 
     draw();
 }
 
 function draw() {
-    //console.log(physicsPlane.velocity);
+    console.log(physicsPlane.position);
     //stats.begin();
 
     let dt = clock.getDelta();
@@ -80,12 +87,14 @@ function draw() {
     movePlane(dt);
     //movePlane(dt, speed);
 
-    moveWater();
+    // detecting when plane flies through loop
+    ringDetector.addEventListener('collide', function() {
+        if (Date.now() - prevRingTime > 100) {
+            handlePlaneThroughRing();
+        }
+    });
 
-    // collision.js
-    //detectCollisions(plane, collidableMeshList, handleCollision);
-    // detecting when plane flies through ring
-    //detectCollisions(plane.children[0], [ring.children[0]], handlePlaneThroughRing);
+    moveWater();
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = round(1 / dt);

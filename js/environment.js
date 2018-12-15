@@ -29,7 +29,7 @@ function addEnvironment(noisefn) {
     });
 
     // matrix where the heights will be saved for the cannonjs heightfield
-    var matrix = [];
+    heightfieldMatrix = [];
     var matrixRow = [];
 
     var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / 4, worldSize / 4);
@@ -96,7 +96,7 @@ function addEnvironment(noisefn) {
 
         matrixRow.push(height);
         if (matrixRow.length === worldSize / 4 + 1) {
-            matrix.push(matrixRow);
+            heightfieldMatrix.push(matrixRow);
             matrixRow = [];
         } 
     }
@@ -152,8 +152,8 @@ function addEnvironment(noisefn) {
     // physical representation of the terrain using a cannonjs heightfield
     // TODO: collision seems to be inaccurate at some angles
     // rotating the matrix is necessary to line it up with the terrain
-    matrix = rotateMatrix(matrix);
-    var hfShape = new CANNON.Heightfield(matrix, {
+    heightfieldMatrix = rotateMatrix(heightfieldMatrix);
+    var hfShape = new CANNON.Heightfield(heightfieldMatrix, {
         elementSize: 4
     });
     var hfBody = new CANNON.Body({

@@ -4,38 +4,54 @@ function getRing(isActive) {
     var torus = new THREE.Mesh(geometry, material);
 
     if (isActive) {
-        // invisbile circle, used in draw() to detect when the plane flies through the ring
-        var geometry = new THREE.CircleGeometry(20, 20);
-        var material = new THREE.MeshBasicMaterial();
-        material.transparent = true;
-        material.opacity = 0;
-        var circle = new THREE.Mesh(geometry, material);
-        torus.add(circle);
+        // invisbile Cylinder, used to detect when the plane flies through the ring
+        ringDetector = new CANNON.Body({
+            shape: new CANNON.Cylinder(20, 20, 0.1, 5),
+            material: new CANNON.Material(),
+            mass: 0
+        });
+        ringDetector.collisionResponse = 0;
+        ringDetector.position.set(-40, 400, -140);
+        world.add(ringDetector);
     } else {
         material.transparent = true;
         material.opacity = 0.3;
     }
-
-    torus.position.set(startPosX + 500, startPosY + 100, startPosZ);
-    torus.rotation.set(startRotX, startRotY, startRotZ);
-
-    return torus;
+    return torus; 
 }
 
 /**
  * called when plane flies through ring
  */
 function handlePlaneThroughRing() {
-    x = Math.random() * worldSize - worldSize / 2;
-    y = Math.random() * 100 + 300;
-    z = Math.random() * worldSize - worldSize / 2;
-    // r = Math.random() * 9 + 1
-    ring.position.set(x, y, z);
-    ring.rotateY(Math.random() * Math.PI);
-    score++; // TODO: only increment once
-    /*
-    ring.rotation.y = nextRing.rotation.y
-    nextRing.position.set(x, y, z);
+    score++;
+
+    // the ring should appear where the semi-transparent ring was
+    ring.position.copy(nextRing.position);
+    ring.rotation.y = nextRing.rotation.y;
+    ringDetector.position.copy(ring.position);
+    ringDetector.quaternion.copy(ring.quaternion);
+
+    // the semi-transparent ring should be relocated somewhere in the FOV of the plane
+    var nextRingSpacing = new CANNON.Vec3();
+    
+    nextRingSpacing.x = Math.random() * 90 - 90;
+    nextRingSpacing.y = Math.random() * 15 - 15;
+    nextRingSpacing.z = -(Math.random() * 120 + 30);
+    nextRingSpacing = physicsPlane.quaternion.vmult(nextRingSpacing);
+    var nextRingPosition = nextRing.position.clone();
+    nextRingPosition.add(nextRingSpacing);
+    // to avoid the ring from clipping into the ground, the height data has to be found for the xz-position
+    if (Math.abs(nextRingPosition.x) < worldSize / 2 && Math.abs(nextRingPosition.z) < worldSize / 2) {
+        var heightAtNextRing = heightfieldMatrix[Math.round((worldSize / 2 + nextRingPosition.x) / 4)][Math.round((worldSize / 2 - nextRingPosition.z) / 4)] - 200;
+        nextRingPosition.y = Math.max(heightAtNextRing + 35, nextRingPosition.y);
+    }
+    nextRing.position.copy(nextRingPosition);
+
+    // rotating the ring randomly
+    var r = Math.random() * 9 + 1
     nextRing.rotation.y = Math.PI / r;
-    */
+    
+    prevRingTime = Date.now();
 }
+
