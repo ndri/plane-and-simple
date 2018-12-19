@@ -1,30 +1,58 @@
 function addEnvironment(noisefn) {
     let environment = new THREE.Object3D();
 
+    // lights TODO: calculate terrain lighting only once
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMapSoft = true;
+
+    light = new THREE.DirectionalLight(0xffffff, 0.98);
+    light.position.set(0, 550, 0);
+    light.position.multiplyScalar(1.3);
+
+    // let target = new THREE.Object3D();
+    // scene.add(target);
+    // target.position.set(100, 0, -300);
+    // light.target = target;
+    light.target = plane;
+
+    light.castShadow = shadows;
+
+    // shadow resolution
+    light.shadow.mapSize.width = 8192;
+    light.shadow.mapSize.height = 8192;
+
+    // shadow camera size (how far away form the plane shadows are rendered)
+    const d = worldSize / 10;
+    light.shadow.camera.left = -d;
+    light.shadow.camera.right = d;
+    light.shadow.camera.top = d;
+    light.shadow.camera.bottom = -d;
+    light.shadow.camera.far = viewDistance + 1000;
+
+    // shadow visualization
+    scene.add(new THREE.CameraHelper(light.shadow.camera));
+    scene.add(light);
+
     // water
-    var geometry = new THREE.PlaneGeometry(viewDistance * 3, viewDistance * 3, 1);
-    var material = new THREE.MeshPhongMaterial({color: 0x3490DC, shininess: 80});
+    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 1);
+    var material = new THREE.MeshStandardMaterial({color: 0x3490DC, roughness: 0.5});
     var water = new THREE.Mesh(geometry, material);
     water.rotation.set(-toRad(90), 0, 0);
+
+    water.receiveShadow = true;
+    geometry.verticesNeedUpdate = true;
+    geometry.computeVertexNormals();
     environment.add(water);
 
+    // fog
     scene.fog = new THREE.Fog(0x6bc0ff, 10, viewDistance);
     renderer.setClearColor(scene.fog.color, 1);
 
-
-    // lights
-    let dirLight = new THREE.DirectionalLight(0xffffff, 0.95);
-    dirLight.position.set(300, 500, 0);
-    scene.add(dirLight);
-
-    let ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
-    ambientLight.position.set(0, 0, 0);
-    scene.add(ambientLight);
-
-
     // terrain TODO: noise texture; maybe different biomes, maybe more islands, tree layer
     var material = new THREE.MeshStandardMaterial({
-        roughness: 0.76,
+        roughness: 0.83,
         vertexColors: THREE.VertexColors,
     });
 
@@ -98,7 +126,7 @@ function addEnvironment(noisefn) {
             if (i % slices === 0) {
                 heightfieldMatrix.push(matrixRow);
             }
-                // console.log(i);
+            // console.log(i);
             matrixRow = []
         }
     }
@@ -128,9 +156,9 @@ function addEnvironment(noisefn) {
 
             // gradient from yellow -> green -> grey -> white
             if (faceHeight < 0.1) {
-                h = 55 + 25 * (faceHeight * 10);
-                s = 55 - 10 * (faceHeight * 10);
-                l = 75 - 15 * (faceHeight * 10);
+                h = 55 + 25 * ((faceHeight - 0.01) * 11.111);
+                s = 55 - 10 * ((faceHeight - 0.01) * 11.111);
+                l = 75 - 15 * ((faceHeight - 0.01) * 11.111);
             } else if (faceHeight < 0.3) {
                 h = 80 - 25 * ((faceHeight - 0.1) * 5);
                 s = 45 - 25 * ((faceHeight - 0.1) * 5);
@@ -150,15 +178,20 @@ function addEnvironment(noisefn) {
     geometry.verticesNeedUpdate = true;
     geometry.computeVertexNormals();
 
+
     var terrain = new THREE.Mesh(geometry, material);
     terrain.rotation.set(-toRad(90), 0, 0);
     terrain.name = "Terrain";
+    // terrain.castShadow = true;
+    terrain.receiveShadow = true;
+
     scene.add(terrain);
 
     // physical representation of the terrain using a cannonjs heightfield
     // TODO: collision seems to be inaccurate at some angles
     // rotating the heightfieldMatrix is necessary to line it up with the terrain
     heightfieldMatrix = rotateMatrix(heightfieldMatrix);
+    // TODO: try using Heightfield minValue, maxValue
     var hfShape = new CANNON.Heightfield(heightfieldMatrix, {
         elementSize: slices * meshSlices
     });
@@ -224,7 +257,11 @@ function addEnvironment(noisefn) {
     return [environment, water, heightfieldMatrix];
 }
 
-function moveWater() {
+function moveWaterAndLight() {
     water.position.x = plane.position.x;
     water.position.z = plane.position.z;
+
+    light.position.x = plane.position.x + 0;
+    light.position.z = plane.position.z - 300;
+    light.position.y = plane.position.y + 300;
 }

@@ -1,22 +1,25 @@
 // Game
 // const gameWidth = 800;
-const gameWidth = document.documentElement.clientWidth - 20;
 // const gameHeight = 500;
-const gameHeight = document.documentElement.clientHeight - 200;
 //TODO: better canvas size (current not responsive)
+const gameWidth = document.documentElement.clientWidth - 20;
+const gameHeight = document.documentElement.clientHeight - 200;
 
-// World
-const worldSize = 1200; // Side length of the square world
-var meshSlices = 4;
-var slices = 4;
-const viewDistance = 1000;
+
+// World  TODO: doesn't work with some values. fix or value guide
+const worldSize = 2000; // Side length of the square world
+var meshSlices = 10;
+var slices = 4; // powers of 2?
+const viewDistance = 800;
 const treeAmount = 10; // (2*treeAmount)^2 trees will be created
 const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
+const shadows = true;
+
 
 // Plane
 const startPosX = 0;
-const startPosY = 500;
-const startPosZ = 0;
+const startPosY = 200;
+const startPosZ = 400;
 const startRotX = Math.PI;
 const startRotY = - Math.PI / 2;
 const startRotZ = Math.PI;

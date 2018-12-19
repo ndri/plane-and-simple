@@ -5,7 +5,7 @@ var viewerPosition = new THREE.Vector3(0.0, 0.0, 30.0);
 var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
 
-var plane, environment, ring, nextRing, heightfieldMatrix;
+var plane, environment, ring, nextRing, heightfieldMatrix, light;
 var world, physicsPlane, physicsGround; // cannonjs stuff
 
 var prevRingTime;
@@ -39,13 +39,6 @@ function onLoad() {
     world.gravity.set(0, -9.82, 0);
 
 
-    // environment.js
-    let seed = Math.random();
-    console.log("Seed: " + seed);
-    noise.seed(seed);
-    [environment, water, heightfieldMatrix] = addEnvironment(noisefn);
-    scene.add(environment);
-
     // plane.js
     plane = addPlane(camera);
     scene.add(plane);
@@ -54,6 +47,13 @@ function onLoad() {
     physicsPlane.position.set(startPosX, startPosY, startPosZ);
     plane.position.set(startPosX, startPosY, startPosZ);
     //plane.rotation.set(startRotX, startRotY, startRotZ);
+
+    // environment.js
+    let seed = Math.random();
+    console.log("Seed: " + seed);
+    noise.seed(seed);
+    [environment, water, heightfieldMatrix] = addEnvironment(noisefn);
+    scene.add(environment);
 
     // ring.js
     ring = getRing(true);
@@ -87,10 +87,6 @@ function onLoad() {
     //         //demo.addVisual(sphereBody);
     //     }
     // }
-
-    //var geom = new THREE.BoxGeometry(100, 100, 100);
-    //var mesh = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({ color: "green"}));
-    //scene.add(mesh);
 
     draw();
 }
@@ -127,7 +123,7 @@ function draw() {
         }
     });
 
-    moveWater();
+    moveWaterAndLight();
 
     // change the DOM elements
     document.getElementById("fps").innerHTML = round(1 / dt);

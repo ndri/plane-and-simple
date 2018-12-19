@@ -12,26 +12,27 @@ function addPlane(camera) {
 
     // Body
     geometry = new THREE.BoxGeometry(1.8, 2, 4);
-    material = new THREE.MeshBasicMaterial({color: 0xccdddd});
+    material = new THREE.MeshStandardMaterial({color: 0xccdddd, roughness: 0.8});
     let body = new THREE.Mesh(geometry, material);
+    body.castShadow = true;
 
     // Tail
     geometry = new THREE.BoxGeometry(1, 1, 5);
-    material = new THREE.MeshBasicMaterial({color: 0xccdddd});
+    material = new THREE.MeshStandardMaterial({color: 0xccdddd, roughness: 0.8});
     let tail = new THREE.Mesh(geometry, material);
     body.add(tail);
     tail.position.set(0, 0.5, 4);
 
     // Wings
     geometry = new THREE.BoxGeometry(11, 0.3, 2);
-    material = new THREE.MeshBasicMaterial({color: 0xcc4444});
+    material = new THREE.MeshStandardMaterial({color: 0xcc4444, roughness: 0.8});
     let wings = new THREE.Mesh(geometry, material);
     body.add(wings);
     wings.position.set(0, 1.2, 0);
 
     // Moving ailerons
     geometry = new THREE.BoxGeometry(4, 0.3, 0.5);
-    material = new THREE.MeshBasicMaterial({color: 0xcc4444});
+    material = new THREE.MeshStandardMaterial({color: 0xcc4444, roughness: 0.8});
     let aileron1 = new THREE.Mesh(geometry, material);
     aileron1.position.set(2.9, 0, 0.25);
     let aileron2 = new THREE.Mesh(geometry, material);
@@ -46,26 +47,31 @@ function addPlane(camera) {
 
     // Elevator
     geometry = new THREE.BoxGeometry(5, 0.3, 1);
-    material = new THREE.MeshBasicMaterial({color: 0xcc4444});
+    material = new THREE.MeshStandardMaterial({color: 0xcc4444, roughness: 0.8});
     let elevator = new THREE.Mesh(geometry, material);
+    elevator.castShadow = true;
     body.add(elevator);
     elevator.position.set(0, 1.2, 5.5);
 
     // Moving elevators
     geometry = new THREE.BoxGeometry(2, 0.3, 0.5);
-    material = new THREE.MeshBasicMaterial({color: 0xcc4444});
+    material = new THREE.MeshStandardMaterial({color: 0xcc4444, roughness: 0.8});
     let elevator1 = new THREE.Mesh(geometry, material);
     let elevator2 = new THREE.Mesh(geometry, material);
+    elevator1.castShadow = true;
+    elevator2.castShadow = true;
     elevator1.position.set(1.5, 0, 0.75);
     elevator2.position.set(-1.5, 0, 0.75);
     let pivot = new THREE.Object3D();
+    pivot.castShadow = true;
     pivot.add(elevator1, elevator2);
     elevator.add(pivot);
 
     // Moving rudder
     geometry = new THREE.BoxGeometry(0.3, 1.5, 1.5);
-    material = new THREE.MeshBasicMaterial({color: 0xcc4444});
+    material = new THREE.MeshStandardMaterial({color: 0xcc4444, roughness: 0.8});
     let rudder = new THREE.Mesh(geometry, material);
+    rudder.castShadow = true;
     pivot = new THREE.Object3D();
     rudder.position.set(0, 0, 0.75);
     pivot.add(rudder);
@@ -74,11 +80,11 @@ function addPlane(camera) {
 
     // Propeller
     geometry = new THREE.BoxGeometry(5, 0.3, 0.1);
-    material = new THREE.MeshBasicMaterial({color: 0x444444});
+    material = new THREE.MeshStandardMaterial({color: 0x444444, roughness: 0.8});
     let propeller = new THREE.Mesh(geometry, material);
     body.add(propeller);
     propeller.position.set(0, 0, -2.1);
-
+    propeller.castShadow = true;
 
     // Camera
     camera.position.set(0, 6, 15);
@@ -101,9 +107,28 @@ function addPlane(camera) {
     physicsPlane.angularDamping = 0.0;
 
     world.addBody(physicsPlane);
+
+    activateShading(body);
+
     return body;
 }
 
+function activateShading(mesh) {
+    for (let i = 0; i < mesh.children.length; i++) {
+        let child = mesh.children[i];
+        if (child.type === "Mesh") {
+            child.geometry.verticesNeedUpdate = true;
+            child.geometry.computeVertexNormals();
+            child.castShadow = true;
+            // child.recieveShadow = true;
+            // console.log(child);
+
+            if (child.children.length > 0) {
+                activateShading(child);
+            }
+        }
+    }
+}
 
 
 function movePlane(dt) {
