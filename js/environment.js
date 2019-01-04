@@ -50,7 +50,8 @@ function addEnvironment(noisefn) {
     scene.fog = new THREE.Fog(0x6bc0ff, 10, viewDistance);
     renderer.setClearColor(scene.fog.color, 1);
 
-    // terrain TODO: noise texture; maybe different biomes, maybe more islands, tree layer
+    // terrain TODO: noise texture; maybe different biomes, maybe more islands, treeinstance layer
+    let treePositions = [];
     var material = new THREE.MeshStandardMaterial({
         roughness: 0.83,
         vertexColors: THREE.VertexColors,
@@ -110,29 +111,29 @@ function addEnvironment(noisefn) {
 
         // v.z = 100;
 
-        // find highest point of terrain (for coloring)
+        // finding the highest point of terrain (for coloring)
         if (v.z > maxHeight) {
             maxHeight = v.z;
         }
 
-        // saving the height
-        let height = 200 + v.z;
-
+        // adding elements to heightfield
         if (i % slices === 0) {
-            matrixRow.push(height);
+            matrixRow.push(200 + v.z);
         }
-
         if ((i + 1) % (worldSize / meshSlices + 1) === 0) {
             if (i % slices === 0) {
                 heightfieldMatrix.push(matrixRow);
             }
-            // console.log(i);
             matrixRow = []
+        }
+
+        // adding positions for trees
+        if (i % 7 === 0) {
+            treePositions.push(v);
         }
     }
 
     console.log(heightfieldMatrix);
-
 
     // coloring vertices by height
     for (let i = 0; i < geometry.faces.length; i++) {
@@ -148,25 +149,25 @@ function addEnvironment(noisefn) {
                 vertexId = f.c;
             }
 
-            // faceHeight in range 0...1
-            let faceHeight = geometry.vertices[vertexId].z / maxHeight;
+            // vertexHeight in range 0...1
+            let vertexHeight = geometry.vertices[vertexId].z / maxHeight;
             let h = 0;
             let s = 0;
             let l = 100;
 
             // gradient from yellow -> green -> grey -> white
-            if (faceHeight < 0.1) {
-                h = 55 + 25 * ((faceHeight - 0.01) * 11.111);
-                s = 55 - 10 * ((faceHeight - 0.01) * 11.111);
-                l = 75 - 15 * ((faceHeight - 0.01) * 11.111);
-            } else if (faceHeight < 0.3) {
-                h = 80 - 25 * ((faceHeight - 0.1) * 5);
-                s = 45 - 25 * ((faceHeight - 0.1) * 5);
-                l = 60 - 20 * ((faceHeight - 0.1) * 5);
-            } else if (faceHeight < 0.8) {
+            if (vertexHeight < 0.1) {
+                h = 55 + 25 * ((vertexHeight - 0.01) * 11.111);
+                s = 55 - 10 * ((vertexHeight - 0.01) * 11.111);
+                l = 75 - 15 * ((vertexHeight - 0.01) * 11.111);
+            } else if (vertexHeight < 0.3) {
+                h = 80 - 25 * ((vertexHeight - 0.1) * 5);
+                s = 45 - 25 * ((vertexHeight - 0.1) * 5);
+                l = 60 - 20 * ((vertexHeight - 0.1) * 5);
+            } else if (vertexHeight < 0.8) {
                 h = 55;
-                s = 20 - 20 * ((faceHeight - 0.3) * 2);
-                l = 40 + 60 * ((faceHeight - 0.3) * 2);
+                s = 20 - 20 * ((vertexHeight - 0.3) * 2);
+                l = 40 + 60 * ((vertexHeight - 0.3) * 2);
             }
 
             s = Math.round(s);
@@ -178,20 +179,17 @@ function addEnvironment(noisefn) {
     geometry.verticesNeedUpdate = true;
     geometry.computeVertexNormals();
 
-
     var terrain = new THREE.Mesh(geometry, material);
     terrain.rotation.set(-toRad(90), 0, 0);
     terrain.name = "Terrain";
     // terrain.castShadow = true;
     terrain.receiveShadow = true;
-
-    scene.add(terrain);
+    environment.add(terrain);
 
     // physical representation of the terrain using a cannonjs heightfield
     // TODO: collision seems to be inaccurate at some angles
     // rotating the heightfieldMatrix is necessary to line it up with the terrain
     heightfieldMatrix = rotateMatrix(heightfieldMatrix);
-    // TODO: try using Heightfield minValue, maxValue
     var hfShape = new CANNON.Heightfield(heightfieldMatrix, {
         elementSize: slices * meshSlices
     });
@@ -206,29 +204,65 @@ function addEnvironment(noisefn) {
 
 
     // trees
-    for (let i = -treeAmount; i < treeAmount; i++) {
-        for (let j = -treeAmount; j < treeAmount; j++) {
-            var tree = new THREE.Object3D();
+    let trees = new THREE.Object3D;
 
-            var geometry = new THREE.BoxGeometry(1, 2, 1);
-            var material = new THREE.MeshBasicMaterial({color: 0x553311});
-            var trunk = new THREE.Mesh(geometry, material);
-            // collidableMeshList.push(trunk);
-            trunk.position.set(0, 1, 0);
-            tree.add(trunk);
+    const treegeometry = new THREE.Geometry();
+    treegeometry.vertices = [
+        new THREE.Vector3( -0.5, -0.5, -0.5 ),
+        new THREE.Vector3( -0.5, 0.5, -0.5 ),
+        new THREE.Vector3( 0.5, 0.5, -0.5 ),
+        new THREE.Vector3( 0.5, -0.5, -0.5 ),
+        new THREE.Vector3( 0, 0, 0.5 )
+    ];
+    treegeometry.faces = [
+        new THREE.Face3( 0, 1, 2 ),
+        new THREE.Face3( 0, 2, 3 ),
+        new THREE.Face3( 1, 0, 4 ),
+        new THREE.Face3( 2, 1, 4 ),
+        new THREE.Face3( 3, 2, 4 ),
+        new THREE.Face3( 0, 3, 4 )
+    ];
+    treegeometry.applyMatrix( new THREE.Matrix4().makeScale( 0.3, 0.3, 1 ) );
+    treegeometry.verticesNeedUpdate = true;
+    treegeometry.computeVertexNormals();
+    // const treematerial = new THREE.MeshStandardMaterial({color: 0x337a58, roughness: 0.8, wireframe: true});
+    const treematerial = new THREE.MeshStandardMaterial({color: 0x337a58, roughness: 0.8});
+    const treemesh = new THREE.Mesh(treegeometry, treematerial);
+    treemesh.castShadow = true;
+    treemesh.receiveShadow = true;
 
-            var geometry = new THREE.BoxGeometry(2.6, 2.6, 2.6);
-            var material = new THREE.MeshBasicMaterial({color: 0x227722});
-            var branches = new THREE.Mesh(geometry, material);
-            // collidableMeshList.push(branches);
-            branches.position.set(0, 3.3, 0);
-            tree.add(branches);
+    const trunkgeometry = new THREE.BoxGeometry(0.06, 0.06, 0.6);
+    const trunkmaterial = new THREE.MeshStandardMaterial({color: 0xff7a58, roughness: 0.8});
+    const trunkmesh = new THREE.Mesh(trunkgeometry, trunkmaterial);
+    trunkmesh.castShadow = true;
+    trunkmesh.receiveShadow = true;
+    trunkmesh.position.set(0, 0, -0.8);
 
-            tree.scale.set(5, 5, 5);
-            tree.position.set(i * 60 + (Math.random() * 40 - 20), 0, j * 60 + (Math.random() * 40 - 20));
-            // environment.add(tree);
+    const tree = new THREE.Object3D;
+    tree.add(treemesh);
+    tree.add(trunkmesh);
+    tree.scale.set(40, 40, 40);
+
+    for (let i = 0; i < treePositions.length; i++) {
+
+        const v = treePositions[i];
+        const x = v.x + Math.round(Math.random() * 10);
+        const y = v.y + Math.round(Math.random() * 10);
+        const z = v.z + 25;
+        const noise = noisefn(x, y);
+        const height = v.z / maxHeight;
+
+        if (0.1 < height && height < 0.5 && noise < 0.2) {
+            const treeinstance = tree.clone();
+            treeinstance.position.set(x, y, z);
+            treeinstance.rotation.set(toRad(noise * 10), toRad(noise * 10), toRad(noise * 360));
+            trees.add(treeinstance);
         }
     }
+    trees.rotation.set(-toRad(90), 0, 0);
+    console.log(trees);
+    environment.add(trees);
+
 
     // clouds TODO: improve, maybe two combined perlin planes
     for (let i = -cloudAmount; i < cloudAmount; i++) {

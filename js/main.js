@@ -49,7 +49,8 @@ function onLoad() {
     //plane.rotation.set(startRotX, startRotY, startRotZ);
 
     // environment.js
-    let seed = Math.random();
+    // let seed = Math.random();
+    let seed = 0.21;
     console.log("Seed: " + seed);
     noise.seed(seed);
     [environment, water, heightfieldMatrix] = addEnvironment(noisefn);
