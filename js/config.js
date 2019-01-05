@@ -12,14 +12,14 @@ var meshSlices = 10;
 var slices = 4; // powers of 2?
 const viewDistance = 1800;
 const treeAmount = 0.5; // 0=min, 1=max
-const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
+const cloudAmount = 7; // (2*cloudAmount)^2 clouds will be created
 const shadows = true;
 
 
 // Plane
 const startPosX = 0;
 const startPosY = 300;
-const startPosZ = 800;
+const startPosZ = 500;
 const startRotX = Math.PI;
 const startRotY = - Math.PI / 2;
 const startRotZ = Math.PI;

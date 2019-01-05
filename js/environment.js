@@ -263,6 +263,27 @@ function addEnvironment(noisefn) {
     trees.rotation.set(-toRad(90), 0, 0);
     environment.add(trees);
 
+    // collision for tree trunks
+    for (let i = 0; i < trees.children.length; i++) {
+        const position = trees.children[i].position;
+        const x = position.x;
+        const y = position.z - ((treeSize - 10) / 2);
+        const z = position.y * -1;
+
+        var runwayBody = new CANNON.Body({
+            shape: new CANNON.Box(new CANNON.Vec3(0.2, (treeSize - 10) / 2, 0.2)),
+            position: new CANNON.Vec3(x, y, z),
+            material: new CANNON.Material({friction: 0.0})
+        });
+        world.addBody(runwayBody);
+
+        // // collision visualization
+        // var geometry1 = new THREE.BoxGeometry(3, treeSize - 10, 3);
+        // var material1 = new THREE.MeshBasicMaterial({color: 0xffaaaa});
+        // var road = new THREE.Mesh(geometry1, material1);
+        // road.position.set(x, y, z);
+        // scene.add(road);
+    }
 
     // clouds TODO: improve, maybe two combined perlin planes
     const spacing = 1.5 * worldSize / (cloudAmount * 2);
