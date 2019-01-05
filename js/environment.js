@@ -10,13 +10,7 @@ function addEnvironment(noisefn) {
     light = new THREE.DirectionalLight(0xffffff, 0.98);
     light.position.set(0, 550, 0);
     light.position.multiplyScalar(1.3);
-
-    // let target = new THREE.Object3D();
-    // scene.add(target);
-    // target.position.set(100, 0, -300);
-    // light.target = target;
     light.target = plane;
-
     light.castShadow = shadows;
 
     // shadow resolution
@@ -24,11 +18,11 @@ function addEnvironment(noisefn) {
     light.shadow.mapSize.height = 8192;
 
     // shadow camera size (how far away form the plane shadows are rendered)
-    const d = worldSize / 10;
-    light.shadow.camera.left = -d;
-    light.shadow.camera.right = d;
+    const d = viewDistance / 6;
+    light.shadow.camera.left = -d * 1.5;
+    light.shadow.camera.right = d * 1.5;
     light.shadow.camera.top = d;
-    light.shadow.camera.bottom = -d;
+    light.shadow.camera.bottom = -d * 2;
     light.shadow.camera.far = viewDistance + 1000;
 
     // shadow visualization
@@ -36,7 +30,7 @@ function addEnvironment(noisefn) {
     scene.add(light);
 
     // water
-    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, 1);
+    var geometry = new THREE.PlaneGeometry(viewDistance * 2, viewDistance * 2, 1);
     var material = new THREE.MeshStandardMaterial({color: 0x3490DC, roughness: 0.5});
     var water = new THREE.Mesh(geometry, material);
     water.rotation.set(-toRad(90), 0, 0);
@@ -47,7 +41,7 @@ function addEnvironment(noisefn) {
     environment.add(water);
 
     // fog
-    scene.fog = new THREE.Fog(0x6bc0ff, 10, viewDistance);
+    scene.fog = new THREE.Fog(0x64c0ff, 10, viewDistance * 0.6);
     renderer.setClearColor(scene.fog.color, 1);
 
     // terrain TODO: noise texture; maybe different biomes, maybe more islands, treeinstance layer
@@ -61,10 +55,8 @@ function addEnvironment(noisefn) {
     var heightfieldMatrix = [];
     var matrixRow = [];
 
-    // var meshSlices = 4; (in config)
-    // var slices = 4;
     var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / meshSlices, worldSize / meshSlices);
-
+    const heightScale = worldSize / 80;
     let maxHeight = 0;
 
     // terrain height with 5 layers of perlin noise
@@ -73,10 +65,10 @@ function addEnvironment(noisefn) {
         let x = v.x * 0.42;
         let y = v.y * 0.42;
 
-        v.z += noisefn(x * 0.003, y * 0.002) * 30 + 6;
-        v.z += noisefn(x * 0.005, y * 0.005) * 20;
+        v.z += noisefn(x * 0.003, y * 0.002) * heightScale + 6;
+        v.z += noisefn(x * 0.005, y * 0.005) * (heightScale / 2);
+        v.z += noisefn(x * 0.010, y * 0.010) * (heightScale / 4);
         v.z += noisefn(x * 0.03, y * 0.03) * 2;
-        v.z += noisefn(x * 0.01, y * 0.01) * 10;
         v.z += noisefn(x * 0.1, y * 0.1) * 0.7;
         v.z *= 3;
 
@@ -96,10 +88,10 @@ function addEnvironment(noisefn) {
 
         // make center of island higher
         if (rline / rpow < 0.5) {
-            v.z += Math.pow(Math.cos((rline / rpow) * Math.PI), 5) * 120;
+            v.z += Math.pow(Math.cos((rline / rpow) * Math.PI), 5) * (heightScale * 4);
         }
         if (rline / rpow < 0.05) {
-            v.z += Math.pow(Math.cos((rline / (rpow / 10)) * Math.PI), 2) * 60;
+            v.z += Math.pow(Math.cos((rline / (rpow / 10)) * Math.PI), 2) * (heightScale * 2);
         }
 
         // water level
@@ -128,12 +120,12 @@ function addEnvironment(noisefn) {
         }
 
         // adding positions for trees
-        if (i % 7 === 0) {
+        const rand = Math.random();
+        if (i % 2 === 0 && rand < treeAmount) {
             treePositions.push(v);
         }
     }
 
-    console.log(heightfieldMatrix);
 
     // coloring vertices by height
     for (let i = 0; i < geometry.faces.length; i++) {
@@ -182,7 +174,7 @@ function addEnvironment(noisefn) {
     var terrain = new THREE.Mesh(geometry, material);
     terrain.rotation.set(-toRad(90), 0, 0);
     terrain.name = "Terrain";
-    // terrain.castShadow = true;
+    terrain.castShadow = true;
     terrain.receiveShadow = true;
     environment.add(terrain);
 
@@ -204,25 +196,26 @@ function addEnvironment(noisefn) {
 
 
     // trees
+    const treeSize = 40;
     let trees = new THREE.Object3D;
 
     const treegeometry = new THREE.Geometry();
     treegeometry.vertices = [
-        new THREE.Vector3( -0.5, -0.5, -0.5 ),
-        new THREE.Vector3( -0.5, 0.5, -0.5 ),
-        new THREE.Vector3( 0.5, 0.5, -0.5 ),
-        new THREE.Vector3( 0.5, -0.5, -0.5 ),
-        new THREE.Vector3( 0, 0, 0.5 )
+        new THREE.Vector3(-0.5, -0.5, -0.5),
+        new THREE.Vector3(-0.5, 0.5, -0.5),
+        new THREE.Vector3(0.5, 0.5, -0.5),
+        new THREE.Vector3(0.5, -0.5, -0.5),
+        new THREE.Vector3(0, 0, 0.5)
     ];
     treegeometry.faces = [
-        new THREE.Face3( 0, 1, 2 ),
-        new THREE.Face3( 0, 2, 3 ),
-        new THREE.Face3( 1, 0, 4 ),
-        new THREE.Face3( 2, 1, 4 ),
-        new THREE.Face3( 3, 2, 4 ),
-        new THREE.Face3( 0, 3, 4 )
+        new THREE.Face3(0, 1, 2),
+        new THREE.Face3(0, 2, 3),
+        new THREE.Face3(1, 0, 4),
+        new THREE.Face3(2, 1, 4),
+        new THREE.Face3(3, 2, 4),
+        new THREE.Face3(0, 3, 4)
     ];
-    treegeometry.applyMatrix( new THREE.Matrix4().makeScale( 0.3, 0.3, 1 ) );
+    treegeometry.applyMatrix(new THREE.Matrix4().makeScale(0.3, 0.3, 1));
     treegeometry.verticesNeedUpdate = true;
     treegeometry.computeVertexNormals();
     // const treematerial = new THREE.MeshStandardMaterial({color: 0x337a58, roughness: 0.8, wireframe: true});
@@ -241,7 +234,7 @@ function addEnvironment(noisefn) {
     const tree = new THREE.Object3D;
     tree.add(treemesh);
     tree.add(trunkmesh);
-    tree.scale.set(40, 40, 40);
+    tree.scale.set(treeSize, treeSize, treeSize);
 
     for (let i = 0; i < treePositions.length; i++) {
 
@@ -249,41 +242,55 @@ function addEnvironment(noisefn) {
         const x = v.x + Math.round(Math.random() * 10);
         const y = v.y + Math.round(Math.random() * 10);
         const z = v.z + 25;
-        const noise = noisefn(x, y);
+        const noise = noisefn(x * 0.005, y * 0.005) + noisefn(x * 0.01, y * 0.01);
         const height = v.z / maxHeight;
 
-        if (0.1 < height && height < 0.5 && noise < 0.2) {
-            const treeinstance = tree.clone();
-            treeinstance.position.set(x, y, z);
-            treeinstance.rotation.set(toRad(noise * 10), toRad(noise * 10), toRad(noise * 360));
-            trees.add(treeinstance);
+        // trees by terrain height and perlin noise
+        if (0.1 < height && height < 0.5 && noise < 0) {
+
+            // tree density by height
+            const toRange = ((height - 0.05) * (2 / 0.45)) - 1; // to range -1...1
+            const density = Math.sin(toRange * Math.PI / 2) + Math.random(); // curves + curve strenght
+            const rand = Math.random();
+            if (rand > Math.abs(density)) {
+                const treeinstance = tree.clone();
+                treeinstance.position.set(x, y, z);
+                treeinstance.rotation.set(toRad(noise * 10), toRad(noise * 10), toRad(noise * 360));
+                trees.add(treeinstance);
+            }
         }
     }
     trees.rotation.set(-toRad(90), 0, 0);
-    console.log(trees);
     environment.add(trees);
 
 
     // clouds TODO: improve, maybe two combined perlin planes
+    const spacing = 1.5 * worldSize / (cloudAmount * 2);
     for (let i = -cloudAmount; i < cloudAmount; i++) {
         for (let j = -cloudAmount; j < cloudAmount; j++) {
             var cloud = new THREE.Object3D();
 
             var geometry = new THREE.BoxGeometry(2, 1, 1);
-            var material = new THREE.MeshBasicMaterial({color: 0xffffff});
+            var material = new THREE.MeshBasicMaterial({color: 0xefefff, side: THREE.DoubleSide});
+            // var material = new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.3, transparent: true});
+            material.opacity = 0.5;
             var base = new THREE.Mesh(geometry, material);
             base.position.set(0, 0, 0);
+            // base.castShadow = true;
             cloud.add(base);
 
-            var geometry = new THREE.BoxGeometry(1, 0.8, 1);
-            var material = new THREE.MeshBasicMaterial({color: 0xffffff});
+            var geometry = new THREE.BoxGeometry(1, 1, 1);
+            var material = new THREE.MeshBasicMaterial({color: 0xefefff, side: THREE.DoubleSide});
+            // var material = new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.3, transparent: true});
             var fluff = new THREE.Mesh(geometry, material);
-            fluff.position.set(0, 0.8, 0);
+            fluff.position.set(0, 1, 0);
+            // fluff.castShadow = true;
             cloud.add(fluff);
 
             cloud.rotation.y = Math.random() * 6.3;
-            cloud.scale.set(Math.random() * 20 + 10, Math.random() * 10 + 10, Math.random() * 20 + 10);
-            cloud.position.set(i * 120, Math.random() * 100 + 150, j * 120);
+            cloud.scale.set(Math.random() * 30 + 30, Math.random() * 10 + 20, Math.random() * 50 + 30);
+            cloud.position.set(i * spacing, Math.random() * 100 + 300, j * spacing);
+
             environment.add(cloud);
         }
     }

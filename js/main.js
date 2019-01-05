@@ -50,7 +50,7 @@ function onLoad() {
 
     // environment.js
     // let seed = Math.random();
-    let seed = 0.21;
+    let seed = 0.8519260220310276;
     console.log("Seed: " + seed);
     noise.seed(seed);
     [environment, water, heightfieldMatrix] = addEnvironment(noisefn);

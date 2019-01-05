@@ -106,6 +106,7 @@ function addPlane(camera) {
     physicsPlane.linearDamping = 0.81;
     physicsPlane.angularDamping = 0.0;
 
+
     world.addBody(physicsPlane);
 
     activateShading(body);

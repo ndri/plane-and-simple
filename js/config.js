@@ -10,16 +10,16 @@ const gameHeight = document.documentElement.clientHeight - 200;
 const worldSize = 2000; // Side length of the square world
 var meshSlices = 10;
 var slices = 4; // powers of 2?
-const viewDistance = 800;
-const treeAmount = 10; // (2*treeAmount)^2 trees will be created
+const viewDistance = 1800;
+const treeAmount = 0.5; // 0=min, 1=max
 const cloudAmount = 5; // (2*cloudAmount)^2 clouds will be created
 const shadows = true;
 
 
 // Plane
 const startPosX = 0;
-const startPosY = 200;
-const startPosZ = 400;
+const startPosY = 300;
+const startPosZ = 800;
 const startRotX = Math.PI;
 const startRotY = - Math.PI / 2;
 const startRotZ = Math.PI;
