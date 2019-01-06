@@ -17,38 +17,8 @@
         <script type="text/javascript" src="js/external-libraries/perlin.js"></script>
         <script type="text/javascript" src="js/external-libraries/stats.min.js"></script>
 
-        <!-- CSS -->
-        <link type="text/css" rel="stylesheet" href="css/style.css" />
-    </head>
-
-    <body onload="onLoad()">
-        <main>
-            <header>
-                <h1>Plane and Simple</h1>
-                <p>By Andri Soone, Jorgen Juurik and Erik Martin Vetemaa</p>
-                <a href="https://github.com/ndri/plane-and-simple">GitHub page</a>
-                <a href="https://courses.cs.ut.ee/2018/cg/fall/Main/Project-PlaneGame">Wiki page</a>
-            </header>
-            <div id="myCanvasContainer">
-                <div id="canvasText">
-                    <p class="">FPS: <span id="fps"></span></p>
-                    <p class="hidden">speed: <span id="speed"></span></p>
-                    <p class="">score: <span id="score"></span></p>
-                    <p class="hidden">fallSpeed: <span id="fallSpeed"></span></p>
-                    <p class="hidden">plane.rotation: <span id="planeRotation"></span></p>
-                    <p class="hidden">plane.getWorldDirection(): <span id="planeDirection"></span></p>
-                    <p class="">aileronPosition: <span id="aileronPosition"></span></p>
-                    <p class="">elevatorPosition: <span id="elevatorPosition"></span></p>
-                    <p class="">rudderPosition: <span id="rudderPosition"></span></p>
-                    <p class="">throttle: <span id="throttle"></span></p>
-                </div>
-            </div>
-            <footer>
-                    w/s - throttle, q/e - yaw, left/right - roll, up/down - pitch, space - reset position
-            </footer>
-        </main>
-
         <!-- Actual game stuff -->
+        <script type="text/javascript" src="js/menu.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
         <script type="text/javascript" src="js/config.js"></script>
         <script type="text/javascript" src="js/plane.js"></script>
@@ -56,5 +26,65 @@
         <script type="text/javascript" src="js/controls.js"></script>
         <script type="text/javascript" src="js/ring.js"></script>
 
+        <!-- CSS -->
+        <link type="text/css" rel="stylesheet" href="css/style.css" />
+    </head>
+
+    <body onload="onLoad()">
+        <main>
+            <div id="myCanvasContainer">
+                <div class="menu" id="mainMenu">
+                    <h1>Plane and Simple</h1>
+                    <p>A simple 3D plane game made as a computer graphics project with Three.js and Cannon.js.</p>
+                    <p>Made by Andri Soone, Jorgen Juurik and Erik Martin Vetemaa.</p>
+                    <p>Controls: w/s - throttle, q/e - yaw, left/right - roll, up/down - pitch, space - reset position</p>
+                    <!--<a href="https://github.com/ndri/plane-and-simple">GitHub page</a>
+                    <a href="https://courses.cs.ut.ee/2018/cg/fall/Main/Project-PlaneGame">Wiki page</a>-->
+                    <hr>
+                    <button onclick="startClicked()">Start Game</button>
+                    <button onclick="settingsClicked()">Settings</button>
+                    <a class="button" href="https://github.com/ndri/plane-and-simple">GitHub Page</a>
+                    <a class="button" href="https://courses.cs.ut.ee/2018/cg/fall/Main/Project-PlaneGame">Wiki Page</a>
+                </div>
+                <div class="hidden menu" id="pauseMenu">
+                    <h1>Plane and Simple</h1>
+                    <hr>
+                    <button onclick="resumeClicked()">Resume Game</button>
+                    <button onclick="reloadClicked()">Reload Map</button>
+                    <button onclick="settingsClicked()">Settings</button>
+                    <button onclick="backToMainMenuClicked()">Back to Main Menu</button>
+                </div>
+                <div class="hidden menu" id="loading">
+                    <h1>Loading...</h1>
+                    <div id="loadingBox">
+                        <div id="loadedBox"></div>
+                    </div>
+                    <p id="loadingMessage"></p>
+                </div>
+                <div class="hidden menu" id="settingsMenu">
+                    <h1>Settings</h1>
+                    <p id="settingsPath"></p>
+                    <hr>
+                    <div id="settingsButtons">
+
+                    </div>
+                    <hr>
+                    <button id="backButton">Back</button>
+                </div>
+                <div class="hidden" id="debugText">
+                    <p class="">FPS: <span id="fps"></span></p>
+                    <p class="hidden">speed: <span id="speed"></span></p>
+                    <p class="">score: <span id="score"></span></p>
+                    <p class="hidden">fallSpeed: <span id="fallSpeed"></span></p>
+                    <p class="hidden">plane.rotation: <span id="planeRotation"></span></p>
+                    <p class="hidden">plane.getWorldDirection(): <span id="planeDirection"></span></p>
+                    <p class="hidden">aileronPosition: <span id="aileronPosition"></span></p>
+                    <p class="hidden">elevatorPosition: <span id="elevatorPosition"></span></p>
+                    <p class="hidden">rudderPosition: <span id="rudderPosition"></span></p>
+                    <p class="hidden">throttle: <span id="throttle"></span></p>
+                </div>
+                <canvas></canvas>
+            </div>
+        </main>
     </body>
 </html>

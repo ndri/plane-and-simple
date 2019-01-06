@@ -11,26 +11,26 @@ function addEnvironment(noisefn) {
     light.position.set(0, 550, 0);
     light.position.multiplyScalar(1.3);
     light.target = plane;
-    light.castShadow = shadows;
+    light.castShadow = config.world.shadows;
 
     // shadow resolution
     light.shadow.mapSize.width = 8192;
     light.shadow.mapSize.height = 8192;
 
     // shadow camera size (how far away form the plane shadows are rendered)
-    const d = viewDistance / 6;
+    const d = config.world.viewDistance / 6;
     light.shadow.camera.left = -d * 1.5;
     light.shadow.camera.right = d * 1.5;
     light.shadow.camera.top = d;
     light.shadow.camera.bottom = -d * 2;
-    light.shadow.camera.far = viewDistance + 1000;
+    light.shadow.camera.far = config.world.viewDistance + 1000;
 
     // shadow visualization
     scene.add(new THREE.CameraHelper(light.shadow.camera));
     scene.add(light);
 
     // water
-    var geometry = new THREE.PlaneGeometry(viewDistance * 2, viewDistance * 2, 1);
+    var geometry = new THREE.PlaneGeometry(config.world.viewDistance * 2, config.world.viewDistance * 2, 1);
     var material = new THREE.MeshStandardMaterial({color: 0x3490DC, roughness: 0.5});
     var water = new THREE.Mesh(geometry, material);
     water.rotation.set(-toRad(90), 0, 0);
@@ -41,7 +41,7 @@ function addEnvironment(noisefn) {
     environment.add(water);
 
     // fog
-    scene.fog = new THREE.Fog(0x64c0ff, 10, viewDistance * 0.6);
+    scene.fog = new THREE.Fog(0x64c0ff, 10, config.world.viewDistance * 0.6);
     renderer.setClearColor(scene.fog.color, 1);
 
     // terrain TODO: noise texture; maybe different biomes, maybe more islands, treeinstance layer
@@ -55,9 +55,11 @@ function addEnvironment(noisefn) {
     var heightfieldMatrix = [];
     var matrixRow = [];
 
-    var geometry = new THREE.PlaneGeometry(worldSize, worldSize, worldSize / meshSlices, worldSize / meshSlices);
-    const heightScale = worldSize / 80;
+    var geometry = new THREE.PlaneGeometry(config.world.worldSize, config.world.worldSize, config.world.worldSize / config.world.meshSlices, config.world.worldSize / config.world.meshSlices);
+    const heightScale = config.world.worldSize / 80;
     let maxHeight = 0;
+
+    updateLoading(35, "Generating terrain height with perlin noise");
 
     // terrain height with 5 layers of perlin noise
     for (let i = 0; i < geometry.vertices.length; i++) {
@@ -74,7 +76,7 @@ function addEnvironment(noisefn) {
 
         let xpow = Math.pow(v.x, 2);
         let ypow = Math.pow(v.y, 2);
-        let rpow = Math.pow(worldSize / 2, 2);
+        let rpow = Math.pow(config.world.worldSize / 2, 2);
         let rline = xpow + ypow;
 
         // v.z = 100;
@@ -109,11 +111,11 @@ function addEnvironment(noisefn) {
         }
 
         // adding elements to heightfield
-        if (i % slices === 0) {
+        if (i % config.world.slices === 0) {
             matrixRow.push(200 + v.z);
         }
-        if ((i + 1) % (worldSize / meshSlices + 1) === 0) {
-            if (i % slices === 0) {
+        if ((i + 1) % (config.world.worldSize / config.world.meshSlices + 1) === 0) {
+            if (i % config.world.slices === 0) {
                 heightfieldMatrix.push(matrixRow);
             }
             matrixRow = []
@@ -121,11 +123,12 @@ function addEnvironment(noisefn) {
 
         // adding positions for trees
         const rand = Math.random();
-        if (i % 2 === 0 && rand < treeAmount) {
+        if (i % 2 === 0 && rand < config.world.treeAmount) {
             treePositions.push(v);
         }
     }
 
+    updateLoading(45, "Coloring vertices by height");
 
     // coloring vertices by height
     for (let i = 0; i < geometry.faces.length; i++) {
@@ -183,17 +186,18 @@ function addEnvironment(noisefn) {
     // rotating the heightfieldMatrix is necessary to line it up with the terrain
     heightfieldMatrix = rotateMatrix(heightfieldMatrix);
     var hfShape = new CANNON.Heightfield(heightfieldMatrix, {
-        elementSize: slices * meshSlices
+        elementSize: config.world.slices * config.world.meshSlices
     });
 
     var hfBody = new CANNON.Body({
         mass: 0
     });
     hfBody.addShape(hfShape);
-    hfBody.position.set(-(worldSize / 2), -200, worldSize / 2);
+    hfBody.position.set(-(config.world.worldSize / 2), -200, config.world.worldSize / 2);
     hfBody.quaternion.setFromEuler(-(Math.PI / 2), 0, 0);
     world.addBody(hfBody);
 
+    updateLoading(75, "Growing trees");
 
     // trees
     const treeSize = 40;
@@ -285,10 +289,12 @@ function addEnvironment(noisefn) {
         // scene.add(road);
     }
 
+    updateLoading(85, "Making clouds");
+
     // clouds TODO: improve, maybe two combined perlin planes
-    const spacing = 1.5 * worldSize / (cloudAmount * 2);
-    for (let i = -cloudAmount; i < cloudAmount; i++) {
-        for (let j = -cloudAmount; j < cloudAmount; j++) {
+    const spacing = 1.5 * config.world.worldSize / (config.world.cloudAmount * 2);
+    for (let i = -config.world.cloudAmount; i < config.world.cloudAmount; i++) {
+        for (let j = -config.world.cloudAmount; j < config.world.cloudAmount; j++) {
             var cloud = new THREE.Object3D();
 
             var geometry = new THREE.BoxGeometry(2, 1, 1);

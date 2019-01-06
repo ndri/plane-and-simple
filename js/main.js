@@ -17,44 +17,54 @@ var noisefn = noise.simplex2;
 //document.body.appendChild(stats.dom);
 var spheres = [];
 
-function onLoad() {
-    var canvasContainer = document.getElementById("myCanvasContainer");
-    var width = gameWidth;
-    var height = gameHeight;
+let gameState;
 
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(width, height);
+function loadGame() {
+    //var canvasContainer = document.getElementById("myCanvasContainer");
+
+    updateLoading(5, "Setting up Three.js");
+
+    renderer = new THREE.WebGLRenderer({canvas: document.querySelector("canvas")});
     renderer.setClearColor(0x35bbff); // background colour
 
-    canvasContainer.appendChild(renderer.domElement);
+    //canvasContainer.appendChild(renderer.domElement);
 
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(80, width / height, 1, viewDistance);
+    camera = new THREE.PerspectiveCamera(80, 1337, 1, config.world.viewDistance);
     //camera.up = new THREE.Vector3(0, 1, 0);
+
+
+    updateLoading(10, "Setting up Cannon.js");
 
     // creating the cannonjs world
     world = new CANNON.World();
     world.broadphase = new CANNON.NaiveBroadphase();
-    world.gravity.set(0, -9.82, 0);
+    world.gravity.set(0, config.world.gravityConstant, 0);
 
+    updateLoading(15, "Making plane");
 
     // plane.js
     plane = addPlane(camera);
     scene.add(plane);
     // setting the cannonjs plane position
     // the threejs plane's position will be set equal to this in the draw() function
-    physicsPlane.position.set(startPosX, startPosY, startPosZ);
-    plane.position.set(startPosX, startPosY, startPosZ);
+    physicsPlane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
+    plane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
     //plane.rotation.set(startRotX, startRotY, startRotZ);
 
+    updateLoading(25, "Making environment");
+
     // environment.js
-    // let seed = Math.random();
-    let seed = 0.8519260220310276;
-    console.log("Seed: " + seed);
-    noise.seed(seed);
+    if (config.world.randomSeed) {
+        config.world.seed = Math.random();
+    }
+    console.log("Seed: " + config.world.seed);
+    noise.seed(config.world.seed);
     [environment, water, heightfieldMatrix] = addEnvironment(noisefn);
     scene.add(environment);
+
+    updateLoading(95, "Making rings");
 
     // ring.js
     ring = getRing(true);
@@ -89,16 +99,21 @@ function onLoad() {
     //     }
     // }
 
+    updateLoading(100, "Done");
+
+    gameState = gameStates.playing;
+
     draw();
 }
 
 function draw() {
+
+    let dt = clock.getDelta();
+    world.step(dt);
+
     // console.log(physicsPlane.position);
     // stats.begin();
 
-    let dt = clock.getDelta();
-
-    world.step(dt);
     //let time = clock.getElapsedTime();
 
     // linking the threejs and cannonjs planes
@@ -139,11 +154,28 @@ function draw() {
     document.getElementById("rudderPosition").innerHTML = round(rudderPosition);
     document.getElementById("throttle").innerHTML = round(throttle);
 
+    resizeCanvasToDisplaySize();
 
-    requestAnimationFrame(draw);
-    renderer.render(scene, camera);
 
     //stats.end();
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(draw);
+}
+
+// https://stackoverflow.com/a/45046955
+function resizeCanvasToDisplaySize() {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    if (canvas.width !== width || canvas.height !== height) {
+        // you must pass false here or three.js sadly fights the browser
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+
+        // set render target sizes here
+    }
 }
 
 // Converts degrees to radians

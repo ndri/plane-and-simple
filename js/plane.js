@@ -103,9 +103,6 @@ function addPlane(camera) {
     cannonBody.addShape(new CANNON.Box(new CANNON.Vec3(10, 0.25, 1.5)), new CANNON.Vec3(0, 1.25, -2));
     cannonBody.addShape(new CANNON.Box(new CANNON.Vec3(3, 0.25, 1)), new CANNON.Vec3(0, 1.25, 4));
     physicsPlane = cannonBody;
-    physicsPlane.linearDamping = 0.81;
-    physicsPlane.angularDamping = 0.0;
-
 
     world.addBody(physicsPlane);
 
@@ -134,7 +131,7 @@ function activateShading(mesh) {
 
 function movePlane(dt) {
 
-    var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * 200000 * dt);
+    var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * config.plane.throttlePower * dt);
     accelerationImpulse = physicsPlane.quaternion.vmult(accelerationImpulse);
 
     var planeCenter = new CANNON.Vec3(
@@ -146,9 +143,9 @@ function movePlane(dt) {
 
 
     var directionVector = new CANNON.Vec3(
-        elevatorPosition * elevatorPower * dt,
-        rudderPosition * rudderPower * dt,
-        aileronPosition * aileronPower * dt
+        elevatorPosition * config.plane.elevatorPower * dt,
+        rudderPosition * config.plane.rudderPower * dt,
+        aileronPosition * config.plane.aileronPower * dt
     );
     directionVector = physicsPlane.quaternion.vmult(directionVector);
 
@@ -157,6 +154,8 @@ function movePlane(dt) {
     );
 
     // TODO: linearDamping should be lower, so the plane keeps going when throttle is release, but then it glides a lot so idk
+    physicsPlane.linearDamping = config.plane.linearDamping;
+    physicsPlane.angularDamping = config.plane.angularDamping;
 
     // Rotate the propeller
     plane.children[3].rotation.set(0, 0, plane.children[3].rotation.z + throttle);

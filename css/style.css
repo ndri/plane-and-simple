@@ -2,6 +2,7 @@ body {
     font-family: monospace;
     background-color: #444444;
     color: white;
+    margin: 0;
 }
 
 main {
@@ -18,19 +19,90 @@ a, a:visited {
 }
 
 #myCanvasContainer {
-    margin-top: 2em;
+    /*margin-top: 2em;*/
 }
 
-#canvasText {
+#debugText {
     font-family: monospace;
     position: absolute;
     z-index: 100;
-    /*width: 800px;*/
     font-size: 1.5em;
     margin: 0.5em;
 }
-#canvasText p {
+
+#debugText p {
     margin: 0;
+}
+
+canvas {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    background-color: #444444;
+    z-index: 0;
+}
+
+.menu {
+    position: absolute;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.69);
+    width: 80vw;
+    height: 80vh;
+    padding: 10vh 10vw;
+    overflow-y: auto;
+}
+
+.menu hr {
+    margin: 5vh 0;
+    border-color: white;
+    border-bottom: none;
+}
+
+.menu button, .menu .button {
+    font-family: monospace;
+    display: table;
+    margin: 1vh 0;
+    padding: 2vh 4vh;
+    cursor: pointer;
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+    font-size: 2.5vh;
+    border-radius: 1vh;
+}
+
+.menu .button {
+    text-decoration: none;
+    width: auto;
+}
+
+.menu button:hover, .menu button:focus, .menu .button:hover, .menu .button:focus {
+    background-color: white;
+    color: #444444;
+}
+
+.menu h1 {
+    font-size: 4vh;
+}
+
+.menu p, a {
+    font-size: 2vh;
+}
+
+.menu input, .menu select {
+    font-size: 2vh;
+}
+
+
+#loadingBox {
+    width: 100%;
+    border: 1px solid white;
+}
+
+#loadedBox {
+    height: 5vh;
+    background-color: white;
+    width: 0;
 }
 
 .hidden {
