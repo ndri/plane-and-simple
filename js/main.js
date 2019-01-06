@@ -1,39 +1,25 @@
-var renderer, scene, camera;
+var renderer, scene, camera, listener;
 var lookAt = new THREE.Vector3(0.0, 0.0, 0.0);
-var viewerPosition = new THREE.Vector3(0.0, 0.0, 30.0);
 
 var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
 
-var plane, environment, ring, nextRing, heightfieldMatrix, light;
+var plane, environment, ring, nextRing, heightfieldMatrix, light, water;
 var world, physicsPlane, physicsGround; // cannonjs stuff
 
 var prevRingTime;
-
+var propellerspeed = 0;
 var noisefn = noise.simplex2;
-
-//var stats = new Stats();
-//stats.showPanel(1);
-//document.body.appendChild(stats.dom);
-var spheres = [];
 
 let gameState;
 
 function loadGame() {
-    //var canvasContainer = document.getElementById("myCanvasContainer");
-
     updateLoading(5, "Setting up Three.js");
 
     renderer = new THREE.WebGLRenderer({canvas: document.querySelector("canvas")});
     renderer.setClearColor(0x35bbff); // background colour
-
-    //canvasContainer.appendChild(renderer.domElement);
-
     scene = new THREE.Scene();
-
     camera = new THREE.PerspectiveCamera(80, 1337, 1, config.world.viewDistance);
-    //camera.up = new THREE.Vector3(0, 1, 0);
-
 
     updateLoading(10, "Setting up Cannon.js");
 
@@ -75,34 +61,8 @@ function loadGame() {
     nextRing.position.set(-10, 410, -110);
     scene.add(nextRing);
 
-
-    // for (var i = -10; i < 10; i += 10) {
-    //     for (var j = -10; j < 10; j += 10) {
-    //
-    //         var sphereShape = new CANNON.Sphere(4.0);
-    //         var sphereBody = new CANNON.Body({mass: 1});
-    //         sphereBody.addShape(sphereShape);
-    //         sphereBody.position.set(i, 200, j);
-    //         //sphereBody.position.vadd(hfBody.position, sphereBody.position);
-    //         world.add(sphereBody);
-    //
-    //
-    //         var geom = new THREE.SphereGeometry(4);
-    //         var mesh = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({color: "red"}));
-    //
-    //         spheres.push({
-    //             collider: sphereBody,
-    //             mesh: mesh
-    //         });
-    //         scene.add(mesh);
-    //         //demo.addVisual(sphereBody);
-    //     }
-    // }
-
     updateLoading(100, "Done");
-
     gameState = gameStates.playing;
-
     draw();
 }
 
@@ -111,19 +71,9 @@ function draw() {
     let dt = clock.getDelta();
     world.step(dt);
 
-    // console.log(physicsPlane.position);
-    // stats.begin();
-
-    //let time = clock.getElapsedTime();
-
     // linking the threejs and cannonjs planes
     plane.position.copy(physicsPlane.position);
     plane.quaternion.copy(physicsPlane.quaternion);
-
-    // for (var sphere of spheres) {
-    //     sphere.mesh.position.copy(sphere.collider.position);
-    //     sphere.mesh.quaternion.copy(sphere.collider.quaternion);
-    // }
 
     // controls.js
     parseControls();
@@ -155,10 +105,6 @@ function draw() {
     document.getElementById("throttle").innerHTML = round(throttle);
 
     resizeCanvasToDisplaySize();
-
-
-    //stats.end();
-
     renderer.render(scene, camera);
     requestAnimationFrame(draw);
 }
@@ -173,8 +119,6 @@ function resizeCanvasToDisplaySize() {
         renderer.setSize(width, height, false);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
-
-        // set render target sizes here
     }
 }
 

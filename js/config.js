@@ -73,7 +73,7 @@ let config = {
         viewDistance: 1800,
         treeAmount: 0.1, // 0=min, 1=max
         cloudAmount: 7, // (2*cloudAmount)^2 clouds will be created
-        shadows: false,
+        shadows: true,
         gravityConstant: -9.82,
         randomSeed: true,
         seed: 0.8519260220310276

@@ -130,9 +130,12 @@ function activateShading(mesh) {
 
 
 function movePlane(dt) {
-
     var accelerationImpulse = new CANNON.Vec3(0, 0, -throttle * config.plane.throttlePower * dt);
     accelerationImpulse = physicsPlane.quaternion.vmult(accelerationImpulse);
+
+    if (physicsPlane.position.y < 0) {
+        physicsPlane.position.y = 0
+    }
 
     var planeCenter = new CANNON.Vec3(
         physicsPlane.position.x,
@@ -158,7 +161,22 @@ function movePlane(dt) {
     physicsPlane.angularDamping = config.plane.angularDamping;
 
     // Rotate the propeller
-    plane.children[3].rotation.set(0, 0, plane.children[3].rotation.z + throttle);
+    if (throttle !== 0) {
+        propellerspeed += throttle * 0.004;
+    } else if (propellerspeed > 0.02) {
+        propellerspeed -= 0.0005;
+    } else if (propellerspeed < -0.02) {
+        propellerspeed += 0.0005;
+    } else {
+        propellerspeed = 0;
+    }
+    if (propellerspeed > 0.3) {
+        propellerspeed = 0.3;
+    }
+    if (propellerspeed < -0.3) {
+        propellerspeed = -0.3;
+    }
+    plane.children[3].rotation.z += propellerspeed;
 
     // Rotate the ailerons
     plane.children[1].children[0].rotation.set(aileronPosition, 0, 0);

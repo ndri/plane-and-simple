@@ -14,8 +14,8 @@ function addEnvironment(noisefn) {
     light.castShadow = config.world.shadows;
 
     // shadow resolution
-    light.shadow.mapSize.width = 8192;
-    light.shadow.mapSize.height = 8192;
+    light.shadow.mapSize.width = config.world.viewDistance * 6;
+    light.shadow.mapSize.height = config.world.viewDistance * 6;
 
     // shadow camera size (how far away form the plane shadows are rendered)
     const d = config.world.viewDistance / 6;
@@ -25,8 +25,9 @@ function addEnvironment(noisefn) {
     light.shadow.camera.bottom = -d * 2;
     light.shadow.camera.far = config.world.viewDistance + 1000;
 
-    // shadow visualization
-    scene.add(new THREE.CameraHelper(light.shadow.camera));
+    // shadowcamera visualization
+    // scene.add(new THREE.CameraHelper(light.shadow.camera));
+
     scene.add(light);
 
     // water
@@ -280,13 +281,6 @@ function addEnvironment(noisefn) {
             material: new CANNON.Material({friction: 0.0})
         });
         world.addBody(runwayBody);
-
-        // // collision visualization
-        // var geometry1 = new THREE.BoxGeometry(3, treeSize - 10, 3);
-        // var material1 = new THREE.MeshBasicMaterial({color: 0xffaaaa});
-        // var road = new THREE.Mesh(geometry1, material1);
-        // road.position.set(x, y, z);
-        // scene.add(road);
     }
 
     updateLoading(85, "Making clouds");
@@ -328,7 +322,6 @@ function addEnvironment(noisefn) {
 function moveWaterAndLight() {
     water.position.x = plane.position.x;
     water.position.z = plane.position.z;
-
     light.position.x = plane.position.x + 0;
     light.position.z = plane.position.z - 300;
     light.position.y = plane.position.y + 300;
