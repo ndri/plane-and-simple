@@ -178,7 +178,7 @@ function addEnvironment(noisefn) {
     var terrain = new THREE.Mesh(geometry, material);
     terrain.rotation.set(-toRad(90), 0, 0);
     terrain.name = "Terrain";
-    terrain.castShadow = true;
+    // terrain.castShadow = true;
     terrain.receiveShadow = true;
     environment.add(terrain);
 
@@ -309,8 +309,8 @@ function addEnvironment(noisefn) {
             cloud.add(fluff);
 
             cloud.rotation.y = Math.random() * 6.3;
-            cloud.scale.set(Math.random() * 30 + 30, Math.random() * 10 + 20, Math.random() * 50 + 30);
-            cloud.position.set(i * spacing, Math.random() * 100 + 300, j * spacing);
+            cloud.scale.set(Math.random() * 40 + 30, Math.random() * 10 + 20, Math.random() * 60 + 30);
+            cloud.position.set(i * spacing + Math.random() * spacing / 2, Math.random() * 100 + 300, j * spacing + Math.random() * spacing / 2);
 
             environment.add(cloud);
         }

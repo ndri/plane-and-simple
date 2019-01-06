@@ -17,8 +17,8 @@ let config = {
     // Plane
     plane: {
         startPosX: 0,
-        startPosY: 300,
-        startPosZ: 500,
+        startPosY: 100,
+        startPosZ: 800,
 
         aileronPower: 100,
         elevatorPower: 100,
@@ -29,7 +29,7 @@ let config = {
         angularDamping: 0,
 
         // Keyboard controls
-        acceleration: 0.3, // How much throttle holding down W does (dynamic for controller with sticks)
+        acceleration: 0.5, // How much throttle holding down W does (dynamic for controller with sticks)
         maxAileronPosition: 0.8, // Aileron position limit for the keyboard (1.0 for controller)
         aileronSpeed: 0.05, // How fast the aileron moves to the limit per tick if the key is held down
         maxElevatorPosition: 0.8,

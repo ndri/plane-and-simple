@@ -86,6 +86,9 @@ function addPlane(camera) {
     propeller.position.set(0, 0, -2.1);
     propeller.castShadow = true;
 
+    // body.scale.set(1, 1, 0.1);
+    // body.visible = false;
+
     // Camera
     camera.position.set(0, 6, 15);
     //camera.position.set(5, 10, 0);

@@ -19,7 +19,7 @@ function loadGame() {
     renderer = new THREE.WebGLRenderer({canvas: document.querySelector("canvas")});
     renderer.setClearColor(0x35bbff); // background colour
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(80, 1337, 1, config.world.viewDistance);
+    camera = new THREE.PerspectiveCamera(100, 1337, 1, config.world.viewDistance);
 
     updateLoading(10, "Setting up Cannon.js");
 
