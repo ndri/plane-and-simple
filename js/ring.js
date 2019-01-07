@@ -25,6 +25,9 @@ function getRing(isActive) {
  */
 function handlePlaneThroughRing() {
     score++;
+    const worldSize = config.world.worldSize;
+    const slices = config.world.slices;
+    const meshSlices = config.world.meshSlices;
 
     // the ring should appear where the semi-transparent ring was
     ring.position.copy(nextRing.position);
@@ -37,15 +40,29 @@ function handlePlaneThroughRing() {
     
     nextRingSpacing.x = Math.random() * 90 - 90;
     nextRingSpacing.y = Math.random() * 15 - 15;
-    nextRingSpacing.z = -(Math.random() * 120 + 30);
-    nextRingSpacing = physicsPlane.quaternion.vmult(nextRingSpacing);
+    nextRingSpacing.z = -(Math.random() * 360 + 90);
+    
     var nextRingPosition = nextRing.position.clone();
+
+    // to avoid the loops from spawning outside the world, an additional factor for quaternion is applied
+    var quaternionFactor = (Math.abs(nextRingPosition.x) + Math.abs(nextRingPosition.z)) / worldSize;
+    var quat = new CANNON.Quaternion()
+    quat.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), quaternionFactor * Math.PI / 2);
+    quat.mult(physicsPlane.quaternion, quat);
+    
+    nextRingSpacing = quat.vmult(nextRingSpacing);
+
     nextRingPosition.add(nextRingSpacing);
+
     // to avoid the ring from clipping into the ground, the height data has to be found for the xz-position
-    if (Math.abs(nextRingPosition.x) < config.world.worldSize / 2 && Math.abs(nextRingPosition.z) < config.world.worldSize / 2) {
-        var heightAtNextRing = heightfieldMatrix[Math.round((config.world.worldSize / 2 + nextRingPosition.x) / (config.world.slices * config.world.meshSlices))][Math.round((config.world.worldSize / config.world.meshSlices - nextRingPosition.z) / (config.world.slices * config.world.meshSlices))] - 200;
-        // Asendasin 4 -> (config.world.slices * config.world.meshSlices), aga pole aimugi kas see õige. Ennem lihtsalt crashis, kui liiga vähe vertexeid oli
+    if (Math.abs(nextRingPosition.x) < worldSize / 2 && Math.abs(nextRingPosition.z) < worldSize / 2) {
+        const nextRingX = Math.round((worldSize / 2 + nextRingPosition.x) / (slices * meshSlices));
+        const nextRingZ = Math.round((worldSize / 2 - nextRingPosition.z) / (slices * meshSlices));
+
+        var heightAtNextRing = heightfieldMatrix[nextRingX][nextRingZ] - 200;
+
         nextRingPosition.y = Math.max(heightAtNextRing + 35, nextRingPosition.y);
+        nextRingPosition.y = Math.min(300, nextRingPosition.y);
     }
     nextRing.position.copy(nextRingPosition);
 
