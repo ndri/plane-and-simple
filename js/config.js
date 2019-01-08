@@ -270,7 +270,7 @@ const metaconfig = {
             step: 1
         },
         shadows: {
-            type: "booleatruen"
+            type: "boolean"
         },
         gravityConstant: {
             type: "number",
