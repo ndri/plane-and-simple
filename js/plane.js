@@ -1,5 +1,3 @@
-var speed = 0;
-var fallSpeed = 0;
 var throttle = 0;
 var score = 0;
 

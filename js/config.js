@@ -77,6 +77,16 @@ let config = {
         gravityConstant: -9.82,
         randomSeed: true,
         seed: 0.8519260220310276
+    },
+
+    // Debug text
+    debug: {
+        fps: true,
+        score: true,
+        aileronPosition: false,
+        elevatorPosition: false,
+        rudderPosition: false,
+        throttle: false
     }
 };
 
@@ -260,7 +270,7 @@ const metaconfig = {
             step: 1
         },
         shadows: {
-            type: "boolean"
+            type: "booleatruen"
         },
         gravityConstant: {
             type: "number",
@@ -271,6 +281,28 @@ const metaconfig = {
         },
         seed: {
             type: "text"
+        }
+    },
+
+    // Debug text
+    debug: {
+        fps: {
+            type: "boolean"
+        },
+        score: {
+            type: "boolean"
+        },
+        aileronPosition: {
+            type: "boolean"
+        },
+        elevatorPosition: {
+            type: "boolean"
+        },
+        rudderPosition: {
+            type: "boolean"
+        },
+        throttle: {
+            type: "boolean"
         }
     }
 

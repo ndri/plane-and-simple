@@ -1,15 +1,17 @@
 function onLoad() {
     gameState = gameStates.mainMenu;
 
-    document.body.addEventListener("keypress", function(e) {
+    document.body.addEventListener("keydown", function(e) {
         if (e.key === "Escape") {
             if (gameState === gameStates.playing) {
                 document.getElementById("pauseMenu").classList.remove("hidden");
                 gameState = gameStates.paused;
+                hideDebugText();
             } else if (gameState === gameStates.paused) {
                 document.getElementById("pauseMenu").classList.add("hidden");
                 document.getElementById("settingsMenu").classList.add("hidden");
                 gameState = gameStates.playing;
+                showDebugText()
             }
         }
     });
@@ -21,12 +23,11 @@ function startClicked() {
 
     // TODO: Loading screen doesn't show up while loadGame() is happening :(
     loading.classList.remove("hidden");
-
     mainMenu.classList.add("hidden");
 
-
-
     loadGame();
+
+    showDebugText();
 }
 
 function resumeClicked() {
@@ -34,6 +35,31 @@ function resumeClicked() {
     pauseMenu.classList.add("hidden");
 
     gameState = gameStates.playing;
+
+    showDebugText();
+}
+
+function showDebugText() {
+    const debugText = document.getElementById("debugText");
+    debugText.classList.remove("hidden");
+
+    for (let id of Object.keys(config.debug)) {
+        let element = document.getElementById(id);
+
+        if (config.debug[id]) {
+            element.parentNode.classList.remove("hidden");
+        }
+    }
+}
+
+function hideDebugText() {
+    const debugText = document.getElementById("debugText");
+    debugText.classList.add("hidden");
+
+    for (let id of Object.keys(config.debug)) {
+        let element = document.getElementById(id);
+        element.parentNode.classList.add("hidden");
+    }
 }
 
 function backToMainMenuClicked() {
@@ -140,7 +166,9 @@ function loadSettings(properties) {
             }
 
             input.oninput = function() {
-                if (input.type === "checkbox") {
+                if (input.type === "number") {
+                    settings[key] = Number(input.value);
+                } else if (input.type === "checkbox") {
                     settings[key] = input.checked;
                 } else {
                     settings[key] = input.value;
