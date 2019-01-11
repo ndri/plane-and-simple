@@ -11,10 +11,30 @@ var prevRingTime;
 var propellerspeed = 0;
 var noisefn = noise.simplex2;
 
+var toLoad = 2;
+
 let gameState;
 
+var loaders = [
+	loadWorld,
+	loadPlane,
+	loadEnvironment,
+	loadDone,
+	draw
+];
+
 function loadGame() {
-    updateLoading(5, "Setting up Three.js");
+	loadOneLoader(0);
+}
+
+function loadOneLoader(i) {
+	loaders[i](function() {
+		loadOneLoader(i+1)
+	});
+}
+
+function loadWorld(callback) {
+	 updateLoading(5, "Setting up Three.js");
 
     renderer = new THREE.WebGLRenderer({canvas: document.querySelector("canvas")});
     renderer.setClearColor(0x35bbff); // background colour
@@ -28,18 +48,18 @@ function loadGame() {
     world.broadphase = new CANNON.NaiveBroadphase();
     world.gravity.set(0, config.world.gravityConstant, 0);
 
-    updateLoading(15, "Making plane");
+	callback();
+}
+
+function loadPlane(callback) {
+	updateLoading(15, "Making plane");
 
     // plane.js
-    plane = addPlane(camera);
-    scene.add(plane);
-    // setting the cannonjs plane position
-    // the threejs plane's position will be set equal to this in the draw() function
-    physicsPlane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
-    plane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
-    //plane.rotation.set(startRotX, startRotY, startRotZ);
+    addPlane(camera, callback);
+}
 
-    updateLoading(25, "Making environment");
+function loadEnvironment(callback) {
+	 updateLoading(25, "Making environment");
 
     // environment.js
     if (config.world.randomSeed) {
@@ -47,8 +67,7 @@ function loadGame() {
     }
     console.log("Seed: " + config.world.seed);
     noise.seed(config.world.seed);
-    [environment, water, heightfieldMatrix] = addEnvironment(noisefn);
-    scene.add(environment);
+    addEnvironment(noisefn);
 
     updateLoading(95, "Making rings");
 
@@ -60,10 +79,15 @@ function loadGame() {
     nextRing = getRing(false);
     nextRing.position.set(-10, 410, -110);
     scene.add(nextRing);
+	
+	callback();
+}
 
+function loadDone(callback) {
     updateLoading(100, "Done");
-    gameState = gameStates.playing;
-    draw();
+    gameState = gameStates.playing;	
+	
+	callback();
 }
 
 function draw() {
@@ -73,6 +97,7 @@ function draw() {
 
     // linking the threejs and cannonjs planes
     plane.position.copy(physicsPlane.position);
+    //console.log(plane);
     plane.quaternion.copy(physicsPlane.quaternion);
 
     // controls.js

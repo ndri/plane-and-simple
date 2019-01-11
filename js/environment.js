@@ -1,5 +1,5 @@
 function addEnvironment(noisefn) {
-    let environment = new THREE.Object3D();
+    environment = new THREE.Object3D();
 
     // lights TODO: calculate terrain lighting only once
     scene.add(new THREE.AmbientLight(0xffffff, 0.8));
@@ -33,7 +33,7 @@ function addEnvironment(noisefn) {
     // water
     var geometry = new THREE.PlaneGeometry(config.world.viewDistance * 2, config.world.viewDistance * 2, 1);
     var material = new THREE.MeshStandardMaterial({color: 0x3490DC, roughness: 0.5});
-    var water = new THREE.Mesh(geometry, material);
+    water = new THREE.Mesh(geometry, material);
     water.rotation.set(-toRad(90), 0, 0);
 
     water.receiveShadow = true;
@@ -53,7 +53,7 @@ function addEnvironment(noisefn) {
     });
 
     // heightfieldMatrix where the heights will be saved for the cannonjs heightfield
-    var heightfieldMatrix = [];
+    heightfieldMatrix = [];
     var matrixRow = [];
 
     var geometry = new THREE.PlaneGeometry(config.world.worldSize, config.world.worldSize, config.world.worldSize / config.world.meshSlices, config.world.worldSize / config.world.meshSlices);
@@ -315,8 +315,10 @@ function addEnvironment(noisefn) {
             environment.add(cloud);
         }
     }
-
-    return [environment, water, heightfieldMatrix];
+    scene.add(environment);
+    if (--toLoad == 0) {
+        draw();
+    }
 }
 
 function moveWaterAndLight() {
