@@ -17,6 +17,8 @@ function addPlane(camera, callback) {
         colladaPlane.name = "Plane";
         colladaPlane.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
 
+        colladaPlane.getObjectByName("propeller").rotation.set(Math.PI / 2, 0, 0);
+
         plane = colladaPlane;
         scene.add(plane);
         
@@ -81,7 +83,6 @@ function movePlane(dt) {
         physicsPlane.position.z
     );
     physicsPlane.applyImpulse(accelerationImpulse, planeCenter);
-
 
     var directionVector = new CANNON.Vec3(
         elevatorPosition * config.plane.elevatorPower * dt,
