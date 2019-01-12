@@ -19,7 +19,7 @@ a, a:visited {
 }
 
 #myCanvasContainer {
-    /*margin-top: 2em;*/
+
 }
 
 #debugText {
@@ -103,6 +103,12 @@ canvas {
     height: 5vh;
     background-color: white;
     width: 0;
+}
+
+#mainMenu {
+    background-image: url("bg.png");
+    background-size: cover;
+    background-position: center;
 }
 
 .hidden {

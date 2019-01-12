@@ -1,6 +1,6 @@
 function parseControls() {
 
-    if (config.controls.type === controllerType.keyboard) {
+    if (config.controls.type == controllerType.keyboard) {
         // Left and right change the aileron position
         if (keyboard.pressed(config.controls.keyboard.aileronLeft)) {
             aileronPosition = Math.min(
@@ -75,17 +75,13 @@ function parseControls() {
             throttle = 0;
         }
 
-        // Space resets the plane to runway
-        if (keyboard.pressed(config.controls.keyboard.reset)) {
-            physicsPlane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
-            physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
-            physicsPlane.quaternion.setFromEuler(0, 0, 0);
-            plane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
-            //plane.rotation.set(startRotX, startRotY, startRotZ);
-        }
-    } else if (config.controls.type === controllerType.gamepad) {
+    } else if (config.controls.type == controllerType.gamepad) {
+
+
 
         var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+        //console.log(gamepads);
+
         if (!gamepads || !gamepads[0]) {
             alert("No gamepad found! Switching to keyboard mode.");
             config.controls.type = controllerType.keyboard;
@@ -97,5 +93,14 @@ function parseControls() {
             elevatorPosition = -gp.axes[config.controls.gamepad.elevatorAxis];
             rudderPosition = -gp.axes[config.controls.gamepad.rudderAxis];
         }
+    }
+
+    // Space resets the plane position
+    if (keyboard.pressed(config.controls.keyboard.reset)) {
+        physicsPlane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
+        physicsPlane.velocity.copy(new CANNON.Vec3(0, 0, 0));
+        physicsPlane.quaternion.setFromEuler(0, 0, 0);
+        plane.position.set(config.plane.startPosX, config.plane.startPosY, config.plane.startPosZ);
+        //plane.rotation.set(startRotX, startRotY, startRotZ);
     }
 }

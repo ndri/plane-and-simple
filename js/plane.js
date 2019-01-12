@@ -25,12 +25,15 @@ function addPlane(camera, callback) {
         colladaPlane.getObjectByName("rudder").children[0].castShadow = true;
         colladaPlane.getObjectByName("elevator_l").children[0].castShadow = true;
         colladaPlane.getObjectByName("elevator_r").children[0].castShadow = true;
+        colladaPlane.getObjectByName("aileron_l").children[0].castShadow = true;
+        colladaPlane.getObjectByName("aileron_r").children[0].castShadow = true;
 
         plane = colladaPlane;
         scene.add(plane);
         
         // Camera
         camera.position.set(0, 6, 15);
+        //camera.position.set(15, 6, -15); // camera for background shot
         camera.lookAt(colladaPlane.position);
         colladaPlane.add(camera);
 
